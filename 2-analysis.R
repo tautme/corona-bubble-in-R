@@ -1,3 +1,5 @@
+library(tidyverse)
+
 ## radius from angle then circumference
 ## for longitude by radius
 #####################
@@ -71,14 +73,26 @@ my_people <- tibble(    c(1:23),
 # names(my_people) <- c("name", "longitude", "latitude")
 num <- dim(my_people)[1]
 
+## choose data ############
+## timeseries cds
+# data_all <- time_data_out %>%
+#   filter(date == "2020-03-23") %>%
+#   select(-county, -state, -growthFactor) %>% view()
+## snapshot cds
+data_all <- read_csv("raw_data/data.csv")
+
 ## this out is wrong, but I need it to create the out variable
 out <- data_all %>%
   filter(  lat <= my_people$latitude[1] + lat_buffer
            & lat >= my_people$latitude[1] - lat_buffer
            & long <= my_people$longitude[1] + lon_buffer
            & long >= my_people$longitude[1] - lon_buffer) %>%
-  summarise(cases = sum(cases),
-            deaths = sum(deaths)) %>%
+  summarise(cases = sum(cases, na.rm = TRUE),
+            deaths = sum(deaths, na.rm = TRUE),
+            tested = sum(tested, na.rm = TRUE),
+            recovered = sum(recovered, na.rm = TRUE),
+            active = sum(active, na.rm = TRUE)
+            ) %>%
   mutate(name = my_people$name[1], buffer_deg = lon_buffer)
 
 # max(today$date)
@@ -111,11 +125,13 @@ for(x in c(1:num)) {
                & lat >= my_people$latitude[x] - lat_buffer
                & long <= my_people$longitude[x] + lon_buffer
                & long >= my_people$longitude[x] - lon_buffer) %>%
-    summarise(cases = sum(cases),
-              deaths = sum(deaths),
-    ) %>%
+    summarize(cases = sum(cases, na.rm = TRUE),
+              deaths = sum(deaths, na.rm = TRUE),
+              tested = sum(tested, na.rm = TRUE),
+              recovered = sum(recovered, na.rm = TRUE),
+              active = sum(active, na.rm = TRUE)) %>%
     mutate(name = my_people$name[x], 
-           buffer_deg = lon_buffer)
+           buffer_lon_deg = lon_buffer)
 }
 
 ## Very strange, but when calculating deaths sum first it mixed up death and confirmed
@@ -144,8 +160,8 @@ radius <- my_people %>%
 # max(today$date)
 
 my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
-  arrange(desc(deaths), desc(cases))
+  arrange(desc(cases), desc(deaths))
 
 my_people_out %>% 
-  select(name, city, region, lon_miles, lat_miles, cases, deaths) %>%
+  select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active) %>%
   View()
