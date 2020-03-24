@@ -12,6 +12,7 @@ data %>%
 
 ## Snapshot CSV ######
 data_all <- read_csv("raw_data/data.csv")
+
 data_all %>%
   filter(country == "USA") %>%
   group_by(state)
