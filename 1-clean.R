@@ -20,10 +20,10 @@ write_csv(time_data_out, "data/cds_timeseries_spread.csv")
 
 time_data_out %>% group_by(state)
 
-data %>%
-  # filter(country == "USA") %>%
-  group_by(country, date, type) %>%
-  spread(type, value)
+# data %>%
+#   # filter(country == "USA") %>%
+#   group_by(country, date, type) %>%
+#   spread(type, value)
 
 
 

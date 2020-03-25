@@ -75,11 +75,14 @@ num <- dim(my_people)[1]
 
 ## choose data ############
 ## timeseries cds
-# data_all <- time_data_out %>%
-#   filter(date == "2020-03-23") %>%
-#   select(-county, -state, -growthFactor) %>% view()
+data_time <- read_csv("data/cds_timeseries_spread.csv")
+today <- max(data_time$date)
+data_time <- time_data_out %>%
+  filter(date == today) %>%
+  select(-county, -state, -growthFactor)
 ## snapshot cds
-data_all <- read_csv("raw_data/data.csv")
+# data_snap <- read_csv("raw_data/data.csv")
+data_all <- data_time
 
 ## this out is wrong, but I need it to create the out variable
 out <- data_all %>%
@@ -92,7 +95,7 @@ out <- data_all %>%
             tested = sum(tested, na.rm = TRUE),
             recovered = sum(recovered, na.rm = TRUE),
             active = sum(active, na.rm = TRUE)
-            ) %>%
+  ) %>%
   mutate(name = my_people$name[1], buffer_deg = lon_buffer)
 
 # max(today$date)
@@ -163,5 +166,6 @@ my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
   arrange(desc(cases), desc(deaths))
 
 my_people_out %>% 
-  select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active) %>%
-  View()
+  select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active)
+# write_csv("data/20200324_my_people_cds_snapshot.csv")
+

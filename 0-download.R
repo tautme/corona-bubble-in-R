@@ -1,5 +1,6 @@
-create.folder("raw_data")
+dir.create("raw_data")
 
 download.file("https://coronadatascraper.com/timeseries-tidy.csv", "raw_data/timeseries-tidy.csv", mode = "wb")
 
 download.file("https://coronadatascraper.com/data.csv", "raw_data/data.csv", mode = "wb")
+
