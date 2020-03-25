@@ -75,11 +75,11 @@ num <- dim(my_people)[1]
 
 ## choose data ############
 ## timeseries cds
-data_time <- read_csv("data/cds_timeseries_spread.csv")
+time_data_out <- read_csv("data/cds_timeseries_spread.csv")
 today <- max(data_time$date)
 data_time <- time_data_out %>%
   filter(date == today) %>%
-  select(-county, -state, -growthFactor)
+  select(-county, -state)
 ## snapshot cds
 # data_snap <- read_csv("raw_data/data.csv")
 data_all <- data_time
@@ -167,5 +167,5 @@ my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
 
 my_people_out %>% 
   select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active)
-# write_csv("data/20200324_my_people_cds_snapshot.csv")
+    write_csv(paste0("data/", format(Sys.time(), "%Y%m%d%H%M%S"), "_my_people_cds.csv"))
 
