@@ -55,12 +55,10 @@ circumference <- 2 * pi * R
 circumference / 360
 
 
-
-
 ## My People ########
 ## degree buffer search area long, lat.
 lon_buffer <- 3
-lat_buffer <- 2.2
+lat_buffer <- 2.3
 
 my_people <- tibble(    c(1:23),
                         c("Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
@@ -136,7 +134,7 @@ for(x in c(1:num)) {
            buffer_lon_deg = lon_buffer)
 }
 
-## Very strange, but when calculating deaths sum first it mixed up death and confirmed
+## Very strange, but when calculating deaths sum first, it mixed up death and confirmed
 
 # out %>%
 #   arrange(desc(confirmed))
@@ -164,7 +162,7 @@ radius <- my_people %>%
 my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
   arrange(desc(cases), desc(deaths))
 
-my_people_out %>% 
+my_people_out %>%
   select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active) %>%
     write_csv(paste0("data/", format(Sys.time(), "%Y%m%d%H%M%S"), "_my_people_cds.csv"))
 

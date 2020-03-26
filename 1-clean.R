@@ -1,18 +1,21 @@
 library(tidyverse)
 
 ## Timeseries CSV #####
-data <- read_csv("raw_data/timeseries-tidy.csv")
-
-names(data)
-is.na(data$value) %>% sum()
-data %>% filter(type != "growthFactor" & value == 0.5)
-
-## growthFactor adds an extra observation for every day. remove first.
-part_time_data <- data %>%
-  filter(type != "growthFactor") %>%
-  group_by(type) %>%
-  mutate(rid = row_number()) %>%
-  select(rid, date, county, state, country, population, lat, long, type, value)
+# data <- read_csv("raw_data/timeseries-tidy.csv")
+# 
+# names(data)
+# is.na(data$value) %>% sum()
+# data %>% filter(type != "growthFactor" & value == 0.5)
+# 
+# data %>%
+# is.na(data$value) %>% sum()
+# 
+# ## growthFactor adds an extra observation for every day. remove first.
+# part_time_data <- data %>%
+#   filter(type != "growthFactor") %>%
+#   group_by(type) %>%
+#   mutate(rid = row_number()) %>%
+#   select(rid, date, county, state, country, population, lat, long, type, value)
 
 
 
@@ -44,7 +47,7 @@ write_csv(timeseries_data_clean, "data/cds_timeseries_spread.csv")
 
 
 
-time_data_out %>% group_by(state)
+# time_data_out %>% group_by(state)
 
 # data %>%
 #   # filter(country == "USA") %>%
@@ -55,11 +58,11 @@ time_data_out %>% group_by(state)
 
 ## Snapshot CSV ######
 ## which does not have date
-data_all <- read_csv("raw_data/data.csv")
-names(data_all)
-
-data_all %>%
-  filter(country == "USA") %>%
-  group_by(state)
+# data_all <- read_csv("raw_data/data.csv")
+# names(data_all)
+# 
+# data_all %>%
+#   filter(country == "USA") %>%
+#   group_by(state)
 
 
