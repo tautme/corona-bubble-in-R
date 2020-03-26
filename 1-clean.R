@@ -27,6 +27,7 @@ timeseries_data$city %>% is.na() %>% sum()
 timeseries_data$state %>% is.na() %>% sum()
 timeseries_data$growthFactor %>% is.na() %>% sum()
 datet <- max(timeseries_data$date)
+datet
 timeseries_data %>%
   filter(date == datet) %>%
   select(growthFactor) %>% is.na() %>% sum()
@@ -35,8 +36,10 @@ timeseries_data %>%
 timeseries_data_clean <- timeseries_data %>%
   select(-county, -city, -growthFactor)
 
-timeseries_data_clean <- timeseries_data_clean %>%
-  filter(active >= 1)
+## this filter removes too much data, there are still three negavites in active for CHN GUM PRI
+# timeseries_data_clean <- timeseries_data_clean %>%
+#   filter(active > 1)
+
 write_csv(timeseries_data_clean, "data/cds_timeseries_spread.csv")
 
 # time_data_out <- part_time_data %>%

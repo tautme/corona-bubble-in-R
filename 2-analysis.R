@@ -75,6 +75,7 @@ num <- dim(my_people)[1]
 ## timeseries cds
 time_data_out <- read_csv("data/cds_timeseries_spread.csv")
 today <- max(time_data_out$date)
+today
 data_time <- time_data_out %>%
   filter(date == today) %>%
   select(-state)
@@ -162,7 +163,10 @@ radius <- my_people %>%
 my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
   arrange(desc(cases), desc(deaths))
 
-my_people_out %>%
-  select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active) %>%
-    write_csv(paste0("data/", format(Sys.time(), "%Y%m%d%H%M%S"), "_my_people_cds.csv"))
+## counts are too high because sums are already given for states
+## counts may be too high because multiple sources reporting on same location
+
+# my_people_out %>%
+#   select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active) %>%
+#     write_csv(paste0("data/", format(Sys.time(), "%Y%m%d%H%M%S"), "_my_people_cds.csv"))
 
