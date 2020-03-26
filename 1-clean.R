@@ -14,6 +14,8 @@ part_time_data <- data %>%
   mutate(rid = row_number()) %>%
   select(rid, date, county, state, country, population, lat, long, type, value)
 
+
+
 ## which dataset is the first one? with all the data details?
 timeseries_data <- read_csv("raw_data/timeseries.csv")
 dim(timeseries_data)
@@ -29,6 +31,9 @@ timeseries_data %>%
 
 timeseries_data_clean <- timeseries_data %>%
   select(-county, -city, -growthFactor)
+
+timeseries_data_clean <- timeseries_data_clean %>%
+  filter(active >= 1)
 write_csv(timeseries_data_clean, "data/cds_timeseries_spread.csv")
 
 # time_data_out <- part_time_data %>%

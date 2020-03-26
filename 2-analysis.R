@@ -76,10 +76,10 @@ num <- dim(my_people)[1]
 ## choose data ############
 ## timeseries cds
 time_data_out <- read_csv("data/cds_timeseries_spread.csv")
-today <- max(data_time$date)
+today <- max(time_data_out$date)
 data_time <- time_data_out %>%
   filter(date == today) %>%
-  select(-county, -state)
+  select(-state)
 ## snapshot cds
 # data_snap <- read_csv("raw_data/data.csv")
 data_all <- data_time
@@ -94,8 +94,7 @@ out <- data_all %>%
             deaths = sum(deaths, na.rm = TRUE),
             tested = sum(tested, na.rm = TRUE),
             recovered = sum(recovered, na.rm = TRUE),
-            active = sum(active, na.rm = TRUE)
-  ) %>%
+            active = sum(active, na.rm = TRUE)) %>%
   mutate(name = my_people$name[1], buffer_deg = lon_buffer)
 
 # max(today$date)
@@ -166,6 +165,6 @@ my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
   arrange(desc(cases), desc(deaths))
 
 my_people_out %>% 
-  select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active)
+  select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active) %>%
     write_csv(paste0("data/", format(Sys.time(), "%Y%m%d%H%M%S"), "_my_people_cds.csv"))
 
