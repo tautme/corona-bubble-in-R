@@ -18,26 +18,65 @@ library(tidyverse)
 #   select(rid, date, county, state, country, population, lat, long, type, value)
 
 
-
 ## which dataset is the first one? with all the data details?
-timeseries_data <- read_csv("raw_data/timeseries.csv")
+timeseries_data <- read_csv("raw_data/timeseries.csv", col_types = cols(
+  city = col_character(),
+  county = col_character(),
+  state = col_character(),
+  country = col_character(),
+  population = col_double(),
+  lat = col_double(),
+  long = col_double(),
+  url = col_character(),
+  cases = col_double(),
+  deaths = col_double(),
+  recovered = col_double(),
+  active = col_double(),
+  tested = col_double(),
+  growthFactor = col_double(),
+  date = col_date(format = "")
+))
+
+## here we have a warning about county column expected logical, then character comes in.
+
+
+## reading json #######
+# library(jsonlite)
+# timeseries_data <- read_json("raw_data/timeseries.json", simplifyVector = TRUE)
+# timeseries_data <- fromJSON("raw_data/timeseries.json")
+# 
+# library(data.table)
+# timeseries_data <- rbindlist(timeseries_data, fill=TRUE)
+# 
+# timeseries_data <- lapply(timeseries_data, function(x) {
+#   x[sapply(x, is.null)] <- NA
+#   unlist(x)
+# })
+# timeseries_data <-do.call("rbind", timeseries_data)
+
+
+#########
 ## I think it is this one
 ## But why does it have calculations that are not needed.
 ## Tidy data is one observation per row
 ## Are there sums already built in from all... states = USA?
 timeseries_data %>%
   filter(date == "2020-03-25") %>%
-  filter(country == "USA") %>%
-  group_by(state, url) %>%
-  # summarise(total = sum(cases, na.rm = TRUE)) %>%
+  filter(country == "USA", state == "NY") %>%
+  # group_by(state, url) %>%
+  summarise(total = sum(cases, na.rm = TRUE)) %>%
   # filter(state != "NA") %>%
-  # summarise(total = sum(total)) %>%
-  View()
+  summarise(total = sum(total)) 
+
 ## March 25 has 64,916 cases. ref. wikipedia
 ## 83,800 ref. jhu dashboard
 ## how too tell if the state is already totaled
 ## stop the double counting!
 
+##  If I group by county and state then remove na will it give correct count?
+timeseries_data %>%
+  filter(country == "USA") %>%
+  group_by(state)
 
 dim(timeseries_data)
 timeseries_data$county %>% is.na() %>% sum()
@@ -52,11 +91,13 @@ timeseries_data %>%
 ## some of the 268 latest dates still donot have a growthfactor, so remove
 
 timeseries_data_clean <- timeseries_data %>%
-  select(-county, -city, -growthFactor)
+  select(-growthFactor)
 
 ## this filter removes too much data, there are still three negavites in active for CHN GUM PRI
 # timeseries_data_clean <- timeseries_data_clean %>%
 #   filter(active > 1)
+
+
 
 write_csv(timeseries_data_clean, "data/cds_timeseries_spread.csv")
 
