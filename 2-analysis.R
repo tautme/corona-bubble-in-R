@@ -166,7 +166,7 @@ my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
 ## counts are too high because sums are already given for states
 ## counts may be too high because multiple sources reporting on same location
 
-# my_people_out %>%
-#   select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active) %>%
-#     write_csv(paste0("data/", format(Sys.time(), "%Y%m%d%H%M%S"), "_my_people_cds.csv"))
+my_people_out %>%
+  select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active) %>%
+    write_csv(paste0("data/", format(Sys.time(), "%Y%m%d%H%M%S"), "_my_people_cds.csv"))
 
