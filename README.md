@@ -3,10 +3,11 @@ How many cases of coronavirus are around you? This is an Rsudio project.
 Data is downloaded from the Corona Data Scraper project. https://coronadatascraper.com/#home
 
 ## Plan
- - get counts of cases by Longitude and Latitude and date
- - create a polygon around your location of ~200 miles
- - sum all cases within that area
+ - get counts of covid-19 cases by Longitude and Latitude and date
+ - create a square around your location of ~200 miles
+  - sum all cases within that area
  - then display a timeseries plot for that location
+ - also display radius vs. count, as a stay-at-home warning
 
 i.e. counts defined by bounderies can be misleading for a place like northern New York getting a count of New York cases, when it is more realistic for the people of New Jersey to be concerned.
 
