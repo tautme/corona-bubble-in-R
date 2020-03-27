@@ -5,7 +5,7 @@ Data is downloaded from the Corona Data Scraper project. https://coronadatascrap
 ## Plan
  - get counts of covid-19 cases by Longitude and Latitude and date
  - create a square around your location of ~200 miles
-  - sum all cases within that area
+ -- sum all cases within that area
  - then display a timeseries plot for that location
  - also display radius vs. count, as a stay-at-home warning
 
