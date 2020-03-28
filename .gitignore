@@ -39,6 +39,6 @@ vignettes/*.pdf
 .Renviron
 
 
-4-myPeople.R
+# 4-myPeople.R
 raw_data
 data
