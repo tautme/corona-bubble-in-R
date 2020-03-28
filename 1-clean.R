@@ -49,6 +49,8 @@ timeseries_data %>%
   summarise(cases = sum(cases)) %>%
   arrange(desc(cases))
   
+## where are the cities?
+timeseries_data_clean[is.na(timeseries_data_clean$city), ]
 
 ## reading json #######
 # library(jsonlite)
@@ -97,6 +99,8 @@ timeseries_data_clean_usa_state <- timeseries_data %>%
 timeseries_data_clean_usa_state <- timeseries_data_clean_usa_state[is.na(timeseries_data_clean_usa_state$county), ]
 timeseries_data_clean_usa_state <- timeseries_data_clean_usa_state[is.na(timeseries_data_clean_usa_state$city), ]
 
+
+
 dim(timeseries_data)
 timeseries_data$county %>% is.na() %>% sum()
 timeseries_data$city %>% is.na() %>% sum()
@@ -111,7 +115,7 @@ timeseries_data %>%
 
 timeseries_data_clean <- timeseries_data %>%
   select(-growthFactor) %>%
-  filter(county != "NA")
+  filter(county != "NA") 
 
 ## this filter removes too much data, there are still three negavites in active for CHN GUM PRI
 # timeseries_data_clean <- timeseries_data_clean %>%
