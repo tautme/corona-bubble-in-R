@@ -37,8 +37,18 @@ timeseries_data <- read_csv("raw_data/timeseries.csv", col_types = cols(
   date = col_date(format = "")
 ))
 
+ldate <- max(timeseries_data$date)
+ldate
 ## here we have a warning about county column expected logical, then character comes in.
 
+## Russia has states in curilic, and it reads them!
+timeseries_data %>%
+  filter(country == "RUS") %>%
+  group_by(state) %>% 
+  filter(date == ldate, state != "NA") %>%
+  summarise(cases = sum(cases)) %>%
+  arrange(desc(cases))
+  
 
 ## reading json #######
 # library(jsonlite)
@@ -61,7 +71,7 @@ timeseries_data <- read_csv("raw_data/timeseries.csv", col_types = cols(
 ## Tidy data is one observation per row
 ## Are there sums already built in from all... states = USA?
 timeseries_data %>%
-  filter(date == "2020-03-25") %>%
+  filter(date == "2020-03-26") %>%
   filter(country == "USA", state == "NY") %>%
   # group_by(state, url) %>%
   summarise(total = sum(cases, na.rm = TRUE)) %>%
@@ -76,7 +86,16 @@ timeseries_data %>%
 ##  If I group by county and state then remove na will it give correct count?
 timeseries_data %>%
   filter(country == "USA") %>%
-  group_by(state)
+  group_by(state) %>%
+  filter(state == "CA", date == "2020-03-26", county != "NA") %>%
+  summarise(total = sum(cases, na.rm = TRUE))
+## game changer, county != "NA"
+## MARCH 26 AR = 349, CA = 4040
+## As of March 26, 2020, 2 p.m. Pacific Daylight Time, there are a total of 3,801 positive cases 
+timeseries_data_clean_usa_state <- timeseries_data %>%
+  filter(country == "USA", state != "NA") 
+timeseries_data_clean_usa_state <- timeseries_data_clean_usa_state[is.na(timeseries_data_clean_usa_state$county), ]
+timeseries_data_clean_usa_state <- timeseries_data_clean_usa_state[is.na(timeseries_data_clean_usa_state$city), ]
 
 dim(timeseries_data)
 timeseries_data$county %>% is.na() %>% sum()
@@ -91,15 +110,17 @@ timeseries_data %>%
 ## some of the 268 latest dates still donot have a growthfactor, so remove
 
 timeseries_data_clean <- timeseries_data %>%
-  select(-growthFactor)
+  select(-growthFactor) %>%
+  filter(county != "NA")
 
 ## this filter removes too much data, there are still three negavites in active for CHN GUM PRI
 # timeseries_data_clean <- timeseries_data_clean %>%
 #   filter(active > 1)
 
 
-
+## remove state from date set for us
 write_csv(timeseries_data_clean, "data/cds_timeseries_spread.csv")
+write_csv(timeseries_data_clean_usa_state, "data/cds_timeseries_spread_usa_state.csv")
 
 # time_data_out <- part_time_data %>%
 #   spread(type, value, fill = 0)

@@ -73,15 +73,31 @@ num <- dim(my_people)[1]
 
 ## choose data ############
 ## timeseries cds
-time_data_out <- read_csv("data/cds_timeseries_spread.csv")
+time_data_out <- read_csv("data/cds_timeseries_spread.csv", col_types = cols(
+  city = col_character(),
+  county = col_character(),
+  state = col_character(),
+  country = col_character(),
+  population = col_double(),
+  lat = col_double(),
+  long = col_double(),
+  url = col_character(),
+  cases = col_double(),
+  deaths = col_double(),
+  recovered = col_double(),
+  active = col_double(),
+  tested = col_double(),
+  date = col_date(format = "")
+))
+
 today <- max(time_data_out$date)
 today
 data_time <- time_data_out %>%
-  filter(date == today) %>%
-  select(-state)
+  filter(date == today)
 ## snapshot cds
 # data_snap <- read_csv("raw_data/data.csv")
 data_all <- data_time
+
 
 ## this out is wrong, but I need it to create the out variable
 out <- data_all %>%
@@ -168,5 +184,15 @@ my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
 
 my_people_out %>%
   select(name, city, region, lon_miles, lat_miles, cases, deaths, tested, recovered, active) %>%
-    write_csv(paste0("data/", format(Sys.time(), "%Y%m%d%H%M%S"), "_my_people_cds.csv"))
+    write_csv(paste0("data/", format(Sys.time(), "%Y%m%d%H%M"), "_my_people_cds.csv"))
 
+## USA State #######
+timeseries_data_clean_usa_state %>%
+  # filter(long < -100) %>%
+  filter(long > -75) %>%
+  group_by(state) %>%
+  # filter(state == "NJ") %>%
+  ggplot(aes(date, cases, color = state)) +
+    geom_line()
+
+## Why is ALASKA long > -75? +0.7 degree long
