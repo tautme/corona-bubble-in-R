@@ -4,12 +4,12 @@
 lon_buffer <- 3
 lat_buffer <- 2.2
 
-my_people <- tibble(    c(1:29),
-                        c("Melissa", "WarnerRobins", "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
-                        c("TX", "GA", "AZ", "KS", "CO", "CA", "AR", "FL", "AR", "TX", "CA", "OH", "RI", "EGY", "CA", "AUS", "CAN",                                                               "CA", "ENG", "PA", "PA", "GA", "MD", "BAH", "CT", "VT", "AR", "KS", "LA" ),
-                        c("Wayne", "Garrett", "Jaber", "Daniel", "Chase", "Bliss", "Adam", "Grandma", "Mom",  "Dad",  "Chance", "Ohio", "RI",  "Helwan", "Ahmed", "Ben", "Victoria", "Ryan",    "Rob", "CMU", "PIT",    "ATL", "Annapolis", "Ozy", "Justin", "Joshua", "Haley", "Don", "Benee"),
-                        c(-96.56, -83.60, -112.07, -94.68, -104.94, -122.25, -94.16, -81.87,     -92.73, -96.80, -117.12, -81.24,  -71.32, 31.33,  -116.39,  145.04, -123.37,    -118.44,  -2.00, -79.95,-80.25, -84.43,  -76.54,     -77.29, -72.64,   -72.57,   -93.13,        -94.70, -91.20),
-                        c(33.27, 32.61, 33.49, 38.98, 39.60, 37.81, 36.07,  28.73,      33.36,  29.98,  32.80,   41.16,  41.74,  29.84,  33.73,   -36.83,  48.47,      34.07,    50.71, 40.44, 40.50,  33.64,   38.79,       25.04,  41.85 ,   44.26,   35.27,         37.40,  30.45), 
+my_people <- tibble(    c(1:32),
+                        c("NewOrleans", "London", "NewYorkCity", "Melissa", "WarnerRobins", "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
+                        c("LA", "ENG", "NY", "TX", "GA", "AZ", "KS", "CO", "CA", "AR", "FL", "AR", "TX", "CA", "OH", "RI", "EGY", "CA", "AUS", "CAN",                                                               "CA", "ENG", "PA", "PA", "GA", "MD", "BAH", "CT", "VT", "AR", "KS", "LA" ),
+                        c("NewOrleans", "London", "NYC", "Wayne", "Garrett", "Jaber", "Daniel", "Chase", "Bliss", "Adam", "Grandma", "Mom",  "Dad",  "Chance", "Ohio", "RI",  "Helwan", "Ahmed", "Ben", "Victoria", "Ryan",    "Rob", "CMU", "PIT",    "ATL", "Annapolis", "Ozy", "Justin", "Joshua", "Haley", "Don", "Benee"),
+                        c(-90.10, -0.11, -73.99, -96.56, -83.60, -112.07, -94.68, -104.94, -122.25, -94.16, -81.87,     -92.73, -96.80, -117.12, -81.24,  -71.32, 31.33,  -116.39,  145.04, -123.37,    -118.44,  -2.00, -79.95,-80.25, -84.43,  -76.54,     -77.29, -72.64,   -72.57,   -93.13,        -94.70, -91.20),
+                        c(29.95, 51.52, 40.74, 33.27, 32.61, 33.49, 38.98, 39.60, 37.81, 36.07,  28.73,      33.36,  29.98,  32.80,   41.16,  41.74,  29.84,  33.73,   -36.83,  48.47,      34.07,    50.71, 40.44, 40.50,  33.64,   38.79,       25.04,  41.85 ,   44.26,   35.27,         37.40,  30.45), 
                         .name_repair = ~ c("number", "city", "region",  "name", "longitude", "latitude"))
 
 # names(my_people) <- c("name", "longitude", "latitude")
@@ -33,6 +33,7 @@ data_time <- read_csv("data/cds_timeseries_spread.csv", col_types = cols(
   tested = col_double(),
   date = col_date(format = "")
 ))
+
 today <- max(data_time$date)
 data_time <- time_data_out %>%
   filter(date == today) 
@@ -131,16 +132,19 @@ my_people_out %>%
 library(sp)
 library(leaflet)
 my_people_out_usa <- my_people_out %>% filter(longitude < -20)
+
 df <- my_people_out_usa
+
 coordinates(df) <- ~longitude+latitude
+
 leaflet(df) %>% 
-  # addMarkers() %>%
+  addMarkers(popup = paste(df$name, "has", df$cases, "cases of COVID-19,", df$lon_miles, "miles around them. DATA:coronadatascraper")) %>%
   # addCircleMarkers(radius = 10) %>%
   # addRectangles(lng1 = lng - 3,
   #               lng2 = lng + 3,
   #               lat1 = lat - 3,
   #               lat1 = lat + 3) %>%
-  addCircles(radius = df$cases * df$deaths / 10) %>%
+  # addCircles(radius = df$cases * df$deaths / 10) %>%
   # labelOptions() %>%
   addTiles()
 

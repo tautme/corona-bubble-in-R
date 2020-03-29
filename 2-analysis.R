@@ -71,6 +71,7 @@ my_people <- tibble(    c(1:23),
 # names(my_people) <- c("name", "longitude", "latitude")
 num <- dim(my_people)[1]
 
+
 ## choose data ############
 ## timeseries cds
 time_data_out <- read_csv("data/cds_timeseries_spread.csv", col_types = cols(
@@ -94,10 +95,38 @@ today <- max(time_data_out$date)
 today
 data_time <- time_data_out %>%
   filter(date == today)
+
 ## snapshot cds
-# data_snap <- read_csv("raw_data/data.csv")
+data_snap <- read_csv("raw_data/data.csv", col_types = cols(
+                .default = col_character(),
+                cases = col_double(),
+                deaths = col_double(),
+                recovered = col_double(),
+                tested = col_double(),
+                active = col_double(),
+                population = col_double(),
+                lat = col_double(),
+                long = col_double(),
+                rating = col_double(),
+                featureId = col_double()
+              ))
 data_all <- data_time
 
+## how does the aggregate level work?
+data_snap %>%
+  filter(country == "USA", 
+         # aggregate == "county",
+         cases > 90000) %>% view()
+
+data_snap %>%
+  group_by(aggregate) %>%
+  summarise(total = sum(cases, na.rm = TRUE))
+
+data_snap$aggregate %>% as_factor() %>% levels()
+
+data_snap %>% filter(aggregate == "state") %>% arrange(desc(cases))
+
+data_snap %>% arrange(desc(cases)) %>% select(-deaths, -url, -maintainers, -curators, -featureId)
 
 ## this out is wrong, but I need it to create the out variable
 out <- data_all %>%
@@ -194,5 +223,7 @@ timeseries_data_clean_usa_state %>%
   # filter(state == "NJ") %>%
   ggplot(aes(date, cases, color = state)) +
     geom_line()
+
+
 
 ## Why is ALASKA long > -75? +0.7 degree long

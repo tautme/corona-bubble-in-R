@@ -17,25 +17,48 @@ library(tidyverse)
 #   mutate(rid = row_number()) %>%
 #   select(rid, date, county, state, country, population, lat, long, type, value)
 
+## load from this machine at /Users/adamhughes/coronadatascraper/dist/data.csv
+timeseries_data0 <- read_csv("/Users/adamhughes/coronadatascraper/dist/timeseries.csv", 
+                             col_types = cols(
+                               city = col_character(),
+                               county = col_character(),
+                               state = col_character(),
+                               country = col_character(),
+                               population = col_double(),
+                               lat = col_double(),
+                               long = col_double(),
+                               url = col_character(),
+                               aggregate = col_character(),
+                               tz = col_character(),
+                               cases = col_double(),
+                               deaths = col_double(),
+                               recovered = col_double(),
+                               active = col_double(),
+                               tested = col_double(),
+                               growthFactor = col_double(),
+                               date = col_date(format = "")
+                             ))
+
+timeseries_data <- timeseries_data0
 
 ## which dataset is the first one? with all the data details?
-timeseries_data <- read_csv("raw_data/timeseries.csv", col_types = cols(
-  city = col_character(),
-  county = col_character(),
-  state = col_character(),
-  country = col_character(),
-  population = col_double(),
-  lat = col_double(),
-  long = col_double(),
-  url = col_character(),
-  cases = col_double(),
-  deaths = col_double(),
-  recovered = col_double(),
-  active = col_double(),
-  tested = col_double(),
-  growthFactor = col_double(),
-  date = col_date(format = "")
-))
+# timeseries_data <- read_csv("raw_data/timeseries.csv", col_types = cols(
+#   city = col_character(),
+#   county = col_character(),
+#   state = col_character(),
+#   country = col_character(),
+#   population = col_double(),
+#   lat = col_double(),
+#   long = col_double(),
+#   url = col_character(),
+#   cases = col_double(),
+#   deaths = col_double(),
+#   recovered = col_double(),
+#   active = col_double(),
+#   tested = col_double(),
+#   growthFactor = col_double(),
+#   date = col_date(format = "")
+# ))
 
 ldate <- max(timeseries_data$date)
 ldate
@@ -50,7 +73,7 @@ timeseries_data %>%
   arrange(desc(cases))
   
 ## where are the cities?
-timeseries_data_clean[is.na(timeseries_data_clean$city), ]
+timeseries_data[!is.na(timeseries_data$city), ]
 
 ## reading json #######
 # library(jsonlite)
@@ -73,7 +96,7 @@ timeseries_data_clean[is.na(timeseries_data_clean$city), ]
 ## Tidy data is one observation per row
 ## Are there sums already built in from all... states = USA?
 timeseries_data %>%
-  filter(date == "2020-03-26") %>%
+  filter(date == "2020-03-28") %>%
   filter(country == "USA", state == "NY") %>%
   # group_by(state, url) %>%
   summarise(total = sum(cases, na.rm = TRUE)) %>%
@@ -89,16 +112,24 @@ timeseries_data %>%
 timeseries_data %>%
   filter(country == "USA") %>%
   group_by(state) %>%
-  filter(state == "CA", date == "2020-03-26", county != "NA") %>%
+  filter(state == "CA", date == "2020-03-29", county != "NA") %>%
   summarise(total = sum(cases, na.rm = TRUE))
 ## game changer, county != "NA"
 ## MARCH 26 AR = 349, CA = 4040
+## March 29 AR = 409, CA = 5552
 ## As of March 26, 2020, 2 p.m. Pacific Daylight Time, there are a total of 3,801 positive cases 
+
+## Do the same sums with aggregate
+timeseries_data %>%
+  filter(country == "USA", aggregate == "county") %>% view()
+## the aggregate doesn't make sense, go back and check snapshot data.csv
+
 timeseries_data_clean_usa_state <- timeseries_data %>%
   filter(country == "USA", state != "NA") 
 timeseries_data_clean_usa_state <- timeseries_data_clean_usa_state[is.na(timeseries_data_clean_usa_state$county), ]
 timeseries_data_clean_usa_state <- timeseries_data_clean_usa_state[is.na(timeseries_data_clean_usa_state$city), ]
 
+## Now that we have aggregate, it should be easier to remove sum observations
 
 
 dim(timeseries_data)
