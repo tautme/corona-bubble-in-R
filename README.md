@@ -17,7 +17,8 @@ i.e. counts defined by bounderies can be misleading for a place like upstate New
 So far we have a buffer set up with a 3 degrees in longitute and latitude, then the distance in miles is estimated assuming Earth is a sphere. 
 
 The next step will be to set buffer in terms of miles and create a polygon instead of a square. 
-Also estimate distance from an elipsoid instead of a sphere.
+Also estimate distance from an elipsoid instead of a sphere. equatorial radius = 6378 km, polar radius = 6357 km
+ - what is the diffence? is it even worth calculating?
 
 
 
