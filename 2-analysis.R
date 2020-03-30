@@ -2,9 +2,9 @@ library(tidyverse)
 
 ## radius from angle then circumference
 ## for longitude by radius
-#####################
+####
 ## NOTICE: estimation, assuming earth is a perfect sphere, NOT ELLIPSOID!
-#####################
+####
 
 latlongdeg2mile <- function(lat, long){
   
@@ -58,7 +58,7 @@ circumference / 360
 ## My People ########
 ## degree buffer search area long, lat.
 lon_buffer <- 3
-lat_buffer <- 2.3
+lat_buffer <- 3
 
 my_people <- tibble(    c(1:23),
                         c("Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
@@ -74,60 +74,45 @@ num <- dim(my_people)[1]
 
 ## choose data ############
 ## timeseries cds
-time_data_out <- read_csv("data/cds_timeseries_spread.csv", col_types = cols(
-  city = col_character(),
-  county = col_character(),
-  state = col_character(),
-  country = col_character(),
-  population = col_double(),
-  lat = col_double(),
-  long = col_double(),
-  url = col_character(),
-  cases = col_double(),
-  deaths = col_double(),
-  recovered = col_double(),
-  active = col_double(),
-  tested = col_double(),
-  date = col_date(format = "")
-))
-
-today <- max(time_data_out$date)
-today
-data_time <- time_data_out %>%
-  filter(date == today)
+# time_data_out <- read_csv("data/cds_timeseries_spread.csv", col_types = cols(
+#   city = col_character(),
+#   county = col_character(),
+#   state = col_character(),
+#   country = col_character(),
+#   population = col_double(),
+#   lat = col_double(),
+#   long = col_double(),
+#   url = col_character(),
+#   cases = col_double(),
+#   deaths = col_double(),
+#   recovered = col_double(),
+#   active = col_double(),
+#   tested = col_double(),
+#   date = col_date(format = "")
+# ))
+# 
+# today <- max(time_data_out$date)
+# today
+# data_time <- time_data_out %>%
+#   filter(date == today)
 
 ## snapshot cds
-data_snap <- read_csv("raw_data/data.csv", col_types = cols(
-                .default = col_character(),
-                cases = col_double(),
-                deaths = col_double(),
-                recovered = col_double(),
-                tested = col_double(),
-                active = col_double(),
-                population = col_double(),
-                lat = col_double(),
-                long = col_double(),
-                rating = col_double(),
-                featureId = col_double()
-              ))
-data_all <- data_time
+data_snap <- read_csv("raw_data/data.csv")
 
-## how does the aggregate level work?
-data_snap %>%
-  filter(country == "USA", 
-         # aggregate == "county",
-         cases > 90000) %>% view()
+## For Mypeople bubble count, I must remove the sum duplicates
+data_snap %>% filter(aggregate == "county") %>% summarise(earth = sum(cases))
+## looks like aggregate broke
+data_all <- data_snap %>% filter(aggregate == "county")
+## if you want to sum it yourself, you can do 
+## city = NULL, county != NULL, state = != NULL
+data_snap %>% filter(is.na("county"), is.na("state")) %>% summarise(earth = sum(cases, na.rm = TRUE))
+data_all <- data_snap %>% filter(!is.na("county"))
+data_snap %>% filter(state != "NA", county != "NA") %>% summarise(total = sum(cases))
+data_all <- data_snap %>% filter(state != "NA", county != "NA")
 
-data_snap %>%
-  group_by(aggregate) %>%
-  summarise(total = sum(cases, na.rm = TRUE))
+##
 
-data_snap$aggregate %>% as_factor() %>% levels()
-
-data_snap %>% filter(aggregate == "state") %>% arrange(desc(cases))
-
-data_snap %>% arrange(desc(cases)) %>% select(-deaths, -url, -maintainers, -curators, -featureId)
-
+## Out ##########
 ## this out is wrong, but I need it to create the out variable
 out <- data_all %>%
   filter(  lat <= my_people$latitude[1] + lat_buffer
