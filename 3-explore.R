@@ -1,7 +1,26 @@
 ## EDA
 library(tidyverse)
 ## timeseries_spread ########
-explore_data <- read_csv("data/cds_timeseries_spread.csv")
+explore_data <- read_csv("data/cds_timeseries_spread.csv", 
+                         col_types = cols(
+                           city = col_character(),
+                           county = col_character(),
+                           state = col_character(),
+                           country = col_character(),
+                           population = col_double(),
+                           lat = col_double(),
+                           long = col_double(),
+                           url = col_character(),
+                           aggregate = col_character(),
+                           tz = col_character(),
+                           cases = col_double(),
+                           deaths = col_double(),
+                           recovered = col_double(),
+                           active = col_double(),
+                           tested = col_double(),
+                           growthFactor = col_double(),
+                           date = col_date(format = "")
+                         ))
 
 ## are there negative counts?
 explore_data %>% names()
@@ -127,13 +146,19 @@ data_snap %>% filter(country == "USA", aggregate == "state") %>% summarise(cases
 
 df <- data_snap %>% filter(!is.na(county), cases >= 1000, !is.na(lat)) %>%
   arrange(desc(cases))
+names(df)[11] <- "latitude"
+names(df)[12] <- "longitude"
+
+## what about fast rate change
+df <- explore_data %>% filter(date == "2020-03-29", !is.na(lat), growthFactor > 1.5, cases > 100)
+names(df)
+names(df)[6] <- "latitude"
+names(df)[7] <- "longitude"
 
 ## Map ##########
 # install.packages(c("leaflet", "sp"))
 library(sp)
 library(leaflet)
-names(df)[11] <- "latitude"
-names(df)[12] <- "longitude"
 
 coordinates(df) <- ~longitude+latitude
 

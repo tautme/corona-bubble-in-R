@@ -18,47 +18,47 @@ library(tidyverse)
 #   select(rid, date, county, state, country, population, lat, long, type, value)
 
 ## load from this machine at /Users/adamhughes/coronadatascraper/dist/data.csv
-timeseries_data0 <- read_csv("/Users/adamhughes/coronadatascraper/dist/timeseries.csv", 
-                             col_types = cols(
-                               city = col_character(),
-                               county = col_character(),
-                               state = col_character(),
-                               country = col_character(),
-                               population = col_double(),
-                               lat = col_double(),
-                               long = col_double(),
-                               url = col_character(),
-                               aggregate = col_character(),
-                               tz = col_character(),
-                               cases = col_double(),
-                               deaths = col_double(),
-                               recovered = col_double(),
-                               active = col_double(),
-                               tested = col_double(),
-                               growthFactor = col_double(),
-                               date = col_date(format = "")
-                             ))
+# timeseries_data0 <- read_csv("/Users/adamhughes/coronadatascraper/dist/timeseries.csv", 
+#                              col_types = cols(
+#                                city = col_character(),
+#                                county = col_character(),
+#                                state = col_character(),
+#                                country = col_character(),
+#                                population = col_double(),
+#                                lat = col_double(),
+#                                long = col_double(),
+#                                url = col_character(),
+#                                aggregate = col_character(),
+#                                tz = col_character(),
+#                                cases = col_double(),
+#                                deaths = col_double(),
+#                                recovered = col_double(),
+#                                active = col_double(),
+#                                tested = col_double(),
+#                                growthFactor = col_double(),
+#                                date = col_date(format = "")
+#                              ))
+# 
+# timeseries_data <- timeseries_data0
 
-timeseries_data <- timeseries_data0
-
-## which dataset is the first one? with all the data details?
-# timeseries_data <- read_csv("raw_data/timeseries.csv", col_types = cols(
-#   city = col_character(),
-#   county = col_character(),
-#   state = col_character(),
-#   country = col_character(),
-#   population = col_double(),
-#   lat = col_double(),
-#   long = col_double(),
-#   url = col_character(),
-#   cases = col_double(),
-#   deaths = col_double(),
-#   recovered = col_double(),
-#   active = col_double(),
-#   tested = col_double(),
-#   growthFactor = col_double(),
-#   date = col_date(format = "")
-# ))
+# which dataset is the first one? with all the data details?
+timeseries_data <- read_csv("raw_data/timeseries.csv", col_types = cols(
+  city = col_character(),
+  county = col_character(),
+  state = col_character(),
+  country = col_character(),
+  population = col_double(),
+  lat = col_double(),
+  long = col_double(),
+  url = col_character(),
+  cases = col_double(),
+  deaths = col_double(),
+  recovered = col_double(),
+  active = col_double(),
+  tested = col_double(),
+  growthFactor = col_double(),
+  date = col_date(format = "")
+))
 
 ldate <- max(timeseries_data$date)
 ldate
@@ -145,7 +145,7 @@ timeseries_data %>%
 ## some of the 268 latest dates still donot have a growthfactor, so remove
 
 timeseries_data_clean <- timeseries_data %>%
-  select(-growthFactor) %>%
+  # select(-growthFactor) %>%
   filter(county != "NA") 
 
 ## this filter removes too much data, there are still three negavites in active for CHN GUM PRI
