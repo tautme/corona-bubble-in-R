@@ -66,9 +66,15 @@ cds %>% filter(aggregate == "county" & state == "NM") %>% View()
 library(sp)
 library(leaflet)
 
-dfa <- cds_usa_today
-names(dfa)[8] <- "latitude"
-names(dfa)[9] <- "longitude"
+# dfa <- cds_usa_today
+# names(dfa)[8] <- "latitude"
+# names(dfa)[9] <- "longitude"
+
+dfa <- data_all
+head(dfa)
+dfa <- dfa %>% filter(latitude != "NA")
+names(dfa)[11] <- "latitude"
+names(dfa)[12] <- "longitude"
 
 coordinates(dfa) <- ~longitude+latitude
 
@@ -76,15 +82,15 @@ coordinates(dfa) <- ~longitude+latitude
 leaflet(dfa) %>% 
   # addMarkers(popup = paste(df$name, "has", df$cases, "cases of COVID-19,", 
   #                          df$lon_miles, "miles around them. DATA:coronadatascraper")) %>%
-  # addCircleMarkers(radius = 10) %>%
+  addCircleMarkers(opacity = dfa$population / 1000000, radius = df$cases/50000) %>%
   # addRectangles(lng1 = lng - 3,
   #               lng2 = lng + 3,
   #               lat1 = lat - 3,
   #               lat1 = lat + 3) %>%
   # addCircles(radius = df$cases * df$deaths / 10) %>%
-  addCircleMarkers(radius = 0.1, popup = paste0(dfa$county, ", ", dfa$state, " tested ", dfa$tested, " with ",
-                                                dfa$cases," cases and ", dfa$deaths, " deaths among ",
-                                                dfa$population, " people. DATA: coronadatascraper.com")) %>%
+  # addCircleMarkers(radius = 0.01, popup = paste0(dfa$county, ", ", dfa$state, " tested ", dfa$tested, " with ",
+  #                                               dfa$cases," cases and ", dfa$deaths, " deaths among ",
+  #                                               dfa$population, " people. DATA: coronadatascraper.com")) %>%
   # labelOptions() %>%
   addTiles()
 

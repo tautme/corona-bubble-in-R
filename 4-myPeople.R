@@ -1,8 +1,8 @@
-
+library(tidyverse)
 ## My People ########
 ## degree buffer search area long, lat.
 lon_buffer <- 3
-lat_buffer <- 2.2
+lat_buffer <- 3
 
 my_people <- tibble(    c(1:32),
                         c("NewOrleans", "London", "NewYorkCity", "Melissa", "WarnerRobins", "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
@@ -17,29 +17,54 @@ num <- dim(my_people)[1]
 
 ## choose data ############
 ## timeseries cds
-data_time <- read_csv("data/cds_timeseries_spread.csv", col_types = cols(
-  city = col_character(),
-  county = col_character(),
-  state = col_character(),
-  country = col_character(),
-  population = col_double(),
-  lat = col_double(),
-  long = col_double(),
-  url = col_character(),
-  cases = col_double(),
-  deaths = col_double(),
-  recovered = col_double(),
-  active = col_double(),
-  tested = col_double(),
-  date = col_date(format = "")
-))
+# data_time <- read_csv("data/cds_timeseries_spread.csv", col_types = cols(
+#   city = col_character(),
+#   county = col_character(),
+#   state = col_character(),
+#   country = col_character(),
+#   population = col_double(),
+#   lat = col_double(),
+#   long = col_double(),
+#   url = col_character(),
+#   cases = col_double(),
+#   deaths = col_double(),
+#   recovered = col_double(),
+#   active = col_double(),
+#   tested = col_double(),
+#   date = col_date(format = "")
+# ))
 
-today <- max(data_time$date)
-data_time <- time_data_out %>%
-  filter(date == today) 
+# data <- read_csv("/Users/adamhughes/coronadatascraper/dist/data.csv", 
+#                  col_types = cols(
+#                    .default = col_double(),
+#                    city = col_character(),
+#                    county = col_character(),
+#                    state = col_character(),
+#                    country = col_character(),
+#                    url = col_character(),
+#                    maintainers = col_character(),
+#                    aggregate = col_character(),
+#                    tz = col_character(),
+#                    sources = col_character(),
+#                    curators = col_character()
+#                  ))
+
+
+# today <- max(data_time$date)
+# data_time <- time_data_out %>%
+#   filter(date == today) 
+
 ## snapshot cds
-# data_snap <- read_csv("raw_data/data.csv")
-data_all <- data_time
+data_snap <- read_csv("raw_data/data.csv")
+
+## For Mypeople bubble count, I must remove the sum duplicates
+data_snap %>% filter(aggregate == "county")
+## looks like aggregate broke
+# data_all <- data_snap %>% filter(aggregate == "county")
+data_all <- data_snap %>% filter(!is.na(county), !is.na(state))
+data_all %>% filter(country == "USA") %>% summarise(earth = sum(cases, na.rm = TRUE))
+data_all %>% filter(country == "USA", state == "AR") %>% summarise(earth = sum(cases, na.rm = TRUE))
+
 
 ## this out is wrong, but I need it to create the out variable
 out <- data_all %>%
@@ -124,7 +149,8 @@ my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
 
 my_people_out %>% 
   select(name, city, region, longitude, latitude, lon_miles, lat_miles, cases, deaths, tested, recovered, active)
-# write_csv("data/20200324_my_people_cds_snapshot.csv")
+
+write_csv(my_people_out, "data/20200329_my_people_cds_snapshot.csv")
 
 
 ## Map ##########

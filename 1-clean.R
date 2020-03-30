@@ -121,7 +121,7 @@ timeseries_data %>%
 
 ## Do the same sums with aggregate
 timeseries_data %>%
-  filter(country == "USA", aggregate == "county") %>% view()
+  filter(country == "USA", aggregate == "county")
 ## the aggregate doesn't make sense, go back and check snapshot data.csv
 
 timeseries_data_clean_usa_state <- timeseries_data %>%
