@@ -58,7 +58,7 @@ circumference / 360
 ## My People ########
 ## degree buffer search area long, lat.
 lon_buffer <- 3
-lat_buffer <- 2.3
+lat_buffer <- 2.3  ## change to 3 for comparison
 
 my_people <- tibble(    c(1:23),
                         c("Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
