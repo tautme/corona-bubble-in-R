@@ -14,7 +14,7 @@ How about the number of cases in your area, between county level and state level
 
 i.e. counts defined by bounderies can be misleading for a place like upstate New York, getting a count of New York cases, when it is more realistic for the people of New Jersey to be concerned.
 
-So far we have a buffer set up with a 3 degrees in longitute and latitude, then the distance in miles is estimated assuming Earth is a sphere. 
+So far we have a buffer set up with a 3 degrees in longitute and latitude, then the distance in miles is estimated assuming Earth is a sphere. (approx. 300x300 mile square)
 
 The next step will be to set buffer in terms of miles and create a polygon instead of a square. 
 Also estimate distance from an elipsoid instead of a sphere. equatorial radius = 6378 km, polar radius = 6357 km
