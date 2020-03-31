@@ -1,8 +1,8 @@
 library(tidyverse)
 ## My People ########
 ## degree buffer search area long, lat.
-lon_buffer <- 3
-lat_buffer <- 3
+lon_buffer <- 1
+lat_buffer <- 1
 
 my_people <- tibble(    c(1:32),
                         c("NewOrleans", "London", "NewYorkCity", "Melissa", "WarnerRobins", "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
@@ -150,7 +150,7 @@ my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
 my_people_out %>% 
   select(name, city, region, longitude, latitude, lon_miles, lat_miles, cases, deaths, tested, recovered, active)
 
-write_csv(my_people_out, "data/20200329_my_people_cds_snapshot.csv")
+write_csv(my_people_out, "data/20200330_my_people_cds_snapshot.csv")
 
 
 ## Map ##########
@@ -164,7 +164,7 @@ df <- my_people_out_usa
 coordinates(df) <- ~longitude+latitude
 
 leaflet(df) %>% 
-  addMarkers(popup = paste(df$name, "has", df$cases, "cases of COVID-19,", df$lon_miles, "miles around them. DATA:coronadatascraper")) %>%
+  addMarkers(popup = paste(df$name, "has", df$cases, "cases of COVID-19,", " approximatly ", df$lon_miles, "miles radius around them. DATA:coronadatascraper")) %>%
   # addCircleMarkers(radius = 10) %>%
   # addRectangles(lng1 = lng - 3,
   #               lng2 = lng + 3,

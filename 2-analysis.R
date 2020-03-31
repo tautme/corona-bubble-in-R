@@ -57,8 +57,8 @@ circumference / 360
 
 ## My People ########
 ## degree buffer search area long, lat.
-lon_buffer <- 3
-lat_buffer <- 3 ## change to 3 for comparison
+lon_buffer <- 1
+lat_buffer <- 1 ## change to 3 for comparison
 
 my_people <- tibble(    c(1:23),
                         c("Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
@@ -72,7 +72,7 @@ my_people <- tibble(    c(1:23),
 num <- dim(my_people)[1]
 
 
-## choose data ############
+## Load Data ############
 ## timeseries cds
 # time_data_out <- read_csv("data/cds_timeseries_spread.csv", col_types = cols(
 #   city = col_character(),
@@ -180,6 +180,8 @@ for(x in c(1:num)) {
 
 ## Examining the data shows that this radius may only work in US and China
 ## Some countries data has only one cental coordinate.
+
+
 
 ## RUN LONGITUDE.R SCRIPT BEFORE RUNNING BELOW ######
 
