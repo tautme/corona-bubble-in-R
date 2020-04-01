@@ -62,6 +62,7 @@ timeseries_data <- read_csv("raw_data/timeseries.csv", col_types = cols(
 
 ldate <- max(timeseries_data$date)
 ldate
+names(timeseries_data)
 ## here we have a warning about county column expected logical, then character comes in.
 
 ## Russia has states in curilic, and it reads them!

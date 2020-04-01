@@ -98,7 +98,7 @@ num <- dim(my_people)[1]
 
 ## snapshot cds
 data_snap <- read_csv("raw_data/data.csv")
-
+names(data_snap)
 ## For Mypeople bubble count, I must remove the sum duplicates
 data_snap %>% filter(aggregate == "county") %>% summarise(earth = sum(cases))
 ## looks like aggregate broke
