@@ -6,7 +6,7 @@
 
 library(tidyverse)
 
-download.file("https://www2.census.gov/geo/docs/reference/county_adjacency.txt", "raw_data/county_adjacency.txt")
+# download.file("https://www2.census.gov/geo/docs/reference/county_adjacency.txt", "raw_data/county_adjacency.txt")
 
 adj_co <- read_tsv("raw_data/county_adjacency.txt", col_names = FALSE,
                   col_types = cols(
@@ -15,14 +15,18 @@ adj_co <- read_tsv("raw_data/county_adjacency.txt", col_names = FALSE,
                     X3 = col_character(),
                     X4 = col_character()
                   ))
-
+adj_co
 adj_co <- adj_co %>% mutate(X5 = X2)
-
+adj_co
 adj_co <- adj_co %>% fill(X1, .direction = "down")
+adj_co
 adj_co <- adj_co %>% fill(X2, .direction = "down")
-
+adj_co
+## remove the duplicate for county to itself?
 adj_co %>% filter(X5 != "NA")
-
+tail(adj_co)
+## well, there are islands... and they are alone... maybe the radius is a better 
+## otherwise, you would want to know the county counts for travelers to your island.
 
 
 
