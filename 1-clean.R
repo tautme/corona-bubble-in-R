@@ -67,7 +67,7 @@ names(timeseries_data)
 
 ## Russia has states in curilic, and it reads them!
 timeseries_data %>%
-  filter(country == "RUS") %>%
+  filter(country == "DEU") %>%
   group_by(state) %>% 
   filter(date == ldate, state != "NA") %>%
   summarise(cases = sum(cases)) %>%

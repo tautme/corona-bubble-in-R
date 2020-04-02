@@ -54,31 +54,36 @@ num <- dim(my_people)[1]
 # data_time <- time_data_out %>%
 #   filter(date == today) 
 
-## snapshot cds
+## load data ######
 data_snap <- read_csv("raw_data/data.csv")
-
+names(data_snap)
 ## For Mypeople bubble count, I must remove the sum duplicates
 data_snap %>% filter(aggregate == "county")
 ## looks like aggregate broke
 # data_all <- data_snap %>% filter(aggregate == "county")
+
+## cut data #######
 data_all <- data_snap %>% filter(!is.na(county), !is.na(state))
 data_all %>% filter(country == "USA") %>% summarise(earth = sum(cases, na.rm = TRUE))
 data_all %>% filter(country == "USA", state == "AR") %>% summarise(earth = sum(cases, na.rm = TRUE))
 
-
+my_people$name
+pep <- 12
 ## this out is wrong, but I need it to create the out variable
 out <- data_all %>%
-  filter(  lat <= my_people$latitude[1] + lat_buffer
-           & lat >= my_people$latitude[1] - lat_buffer
-           & long <= my_people$longitude[1] + lon_buffer
-           & long >= my_people$longitude[1] - lon_buffer) %>%
+  filter(  lat <= my_people$latitude[pep] + lat_buffer
+           & lat >= my_people$latitude[pep] - lat_buffer
+           & long <= my_people$longitude[pep] + lon_buffer
+           & long >= my_people$longitude[pep] - lon_buffer) %>%
   summarise(cases = sum(cases, na.rm = TRUE),
             deaths = sum(deaths, na.rm = TRUE),
             tested = sum(tested, na.rm = TRUE),
             recovered = sum(recovered, na.rm = TRUE),
-            active = sum(active, na.rm = TRUE)
+            active = sum(active, na.rm = TRUE),
+            population = sum(population, na.rm = TRUE),
+            hospitalized = sum(hospitalized, na.rm = TRUE)
   ) %>%
-  mutate(name = my_people$name[1], buffer_deg = lon_buffer)
+  mutate(name = my_people$name[pep], buffer_deg = lon_buffer)
 
 # max(today$date)
 # min(today$date)
@@ -114,7 +119,9 @@ for(x in c(1:num)) {
               deaths = sum(deaths, na.rm = TRUE),
               tested = sum(tested, na.rm = TRUE),
               recovered = sum(recovered, na.rm = TRUE),
-              active = sum(active, na.rm = TRUE)) %>%
+              active = sum(active, na.rm = TRUE),
+              population = sum(population, na.rm = TRUE),
+              hospitalized = sum(hospitalized, na.rm = TRUE)) %>%
     mutate(name = my_people$name[x], 
            buffer_lon_deg = lon_buffer)
 }
@@ -144,14 +151,16 @@ radius <- my_people %>%
 
 # max(today$date)
 
-my_people_out <- merge(radius, out, by = "name", all = TRUE) %>%
+my_people_out <- merge(radius, out, by = "name", all = TRUE) 
+
+names(my_people_out)
+my_people_out %>% 
+  select(name, city, region, longitude, 
+         latitude, lon_miles, lat_miles, tested, 
+         cases, deaths, recovered, active) %>%
   arrange(desc(cases), desc(deaths))
 
-my_people_out %>% 
-  select(name, city, region, longitude, latitude, lon_miles, lat_miles, cases, deaths, tested, recovered, active)
-
-write_csv(my_people_out, "data/20200330_my_people_cds_snapshot.csv")
-
+write_csv(my_people_out, paste0("data/", format(Sys.time(), "%Y%m%d%H%M"), "_my_people_cds_snapshot.csv"))
 
 ## Map ##########
 # install.packages(c("leaflet", "sp"))
@@ -164,7 +173,7 @@ df <- my_people_out_usa
 coordinates(df) <- ~longitude+latitude
 
 leaflet(df) %>% 
-  addMarkers(popup = paste(df$name, "has", df$cases, "cases of COVID-19,", " approximatly ", df$lon_miles, "miles radius around them. DATA:coronadatascraper")) %>%
+  addMarkers(popup = paste(df$name, "has", df$cases, "cases of COVID-19,", " approximatly ", df$lon_miles, "miles radius around them. DATA:COVID-Atlas")) %>%
   # addCircleMarkers(radius = 10) %>%
   # addRectangles(lng1 = lng - 3,
   #               lng2 = lng + 3,
