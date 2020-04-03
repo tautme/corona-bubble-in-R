@@ -267,3 +267,58 @@ paste("Estimate from county level data points. In this square there are an estim
 # Check state and territorial health departments. 
 # Estimate COVID-19 cases from county level data points. DATA: https://coronadatascraper.com
 # covid_baton_rouge
+
+
+
+
+
+## As you increase the radius, how does increase plot
+## radius vs. cases #########
+my_radius <- seq(0, 2.5, by = 0.2)
+my_radius[1]
+num <- length(my_radius)
+
+outi <- today %>%
+  filter(    Lat <= my_people$latitude[1] + my_radius[1]
+             & Lat >= my_people$latitude[1] - my_radius[1]
+             & Long_ <= my_people$longitude[1] + my_radius[1]
+             & Long_ >= my_people$longitude[1] - my_radius[1]) %>%
+  summarise(confirmed = sum(Confirmed),
+            deaths = sum(Deaths)) %>%
+  mutate(radius = my_radius[1])
+
+my_people$name
+# pep <- 24
+
+for(x in c(1:num)) {
+  outi[x, ] <- today %>%
+    filter(    Lat <= my_people$latitude[pep] + my_radius[x]
+               & Lat >= my_people$latitude[pep] - my_radius[x]
+               & Long_ <= my_people$longitude[pep] + my_radius[x]
+               & Long_ >= my_people$longitude[pep] - my_radius[x]) %>%
+    summarise(confirmed = sum(Confirmed),
+              deaths = sum(Deaths)) %>%
+    mutate(radius = my_radius[x])
+}
+
+# max(today$date)
+
+outi %>%
+  ggplot(aes(x = radius, y = confirmed)) +
+    geom_line() +
+    ggtitle(paste("Estimated COVID-19 cases in ", my_people$city[pep], ", ", my_people$region[pep], " -- (Longitude, Latitude) -- (", 
+                  my_people$longitude[pep], ", ", my_people$latitude[pep], ") -- 2020 March 31 -- Data: JHU-CSSE")) +
+    xlab("Degrees Longitude & Latitude Away") #+
+    # annotate("text", x = 1, y = 4500, label = "data source: coronadatascraper.com")
+      
+
+## add information about miles from degree longitude
+radiusi <- my_radius %>% tibble() %>%
+  mutate(lon_miles = my_radius * latlongdeg2mile(my_people$latitude[1], my_people$longitude[1]),
+         lat_miles = my_radius * round(circumference / 360, 2))
+names(radiusi)[1] <- "radius"
+
+my_radius_outi <- merge(radiusi, outi, by = "radius", all = TRUE) %>%
+  arrange(desc(deaths), desc(confirmed))
+
+write_csv(my_radius_outi, paste0("output/", format(Sys.time(), "%Y%m%d%H%M"), "_my_radius_jhu_daily.csv"))
