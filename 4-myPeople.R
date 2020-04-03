@@ -196,15 +196,15 @@ df <- my_people_out_usa
 coordinates(df) <- ~longitude+latitude
 
 leaflet(df) %>% 
-  addMarkers(popup = paste(df$name, "has", df$cases, "cases of COVID-19,", " approximatly ", df$lon_miles, "miles radius around them. DATA:https://coronadatascraper.com")) %>%
+  addMarkers(popup = paste(df$name[pep], "has", df$cases[pep], "cases of COVID-19,", " approximatly ", df$lon_miles[pep], "miles radius around them. DATA:https://coronadatascraper.com")) %>%
   # addCircleMarkers(radius = 10) %>%
   addRectangles(lat2 = my_people_out_usa$latitude[pep] + lat_buffer,
                 lat1 = my_people_out_usa$latitude[pep] - lat_buffer,
                 lng2 = my_people_out_usa$longitude[pep] + lon_buffer, 
                 lng1 = my_people_out_usa$longitude[pep] - lon_buffer, 
-                popup = paste("Estimate from county level data points -- (2 degree Longitude, 2 degree Latitude square) In this", my_people_out$lon_miles[pep] * 2, "mile wide and ", 
-                              my_people_out$lat_miles[pep] * 2, "mile tall area, there are an estimated <B>", 
-                              my_people_out$cases[pep], "</B> confirmed cases of COVID-19. DATA:https://coronadatascraper.com")) %>%
+                popup = paste("Estimate from county level data points -- (2 degree Longitude, 2 degree Latitude square) In this", my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
+                              my_people_out_usa$lat_miles[pep] * 2, "mile tall area, there are an estimated <B>", 
+                              my_people_out_usa$cases[pep], "</B> confirmed cases of COVID-19. DATA:https://coronadatascraper.com")) %>%
   # addCircles(radius = df$cases * df$deaths / 10) %>%
   # labelOptions() %>%
   addTiles()
@@ -234,38 +234,42 @@ leaflet(dfa) %>%
                 lat1 = my_people_out_usa$latitude[pep] - lat_buffer,
                 lng2 = my_people_out_usa$longitude[pep] + lon_buffer, 
                 lng1 = my_people_out_usa$longitude[pep] - lon_buffer, 
-                popup = paste("<font size=3>ESTIMATION SQUARE:<p>Population: ", my_people_out_usa$population[pep], "people</p> 
+                popup = paste("<font size=3>ESTIMATION SQUARE:
+                              <p>Population: <B>", my_people_out_usa$population[pep], "</B></p> 
                               <p>Cases: <B>", my_people_out_usa$cases[pep], "</B></p>
                               <p>Deaths: <B>", my_people_out_usa$deaths[pep], "</B></p>
                               DATA: <B>https://coronadatascraper.com</B></font>")) %>%
-  addCircleMarkers(fillOpacity = dfa$cases, radius = 5, popup = paste("<font size=3> ", dfa$county, " , ", dfa$state, 
-                                                                      "<p>Cases: <B>", dfa$cases, "</B></p>
-                                                                      <p>Deaths: <B>", my_people_out_usa$deaths[pep], "</B></p>
+  addCircleMarkers(fillOpacity = dfa$cases, radius = 5, popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
+                                                                      "<p>Population: <B>", my_people_out_usa$population[pep], "</B></p>
+                                                                      <p>Cases: <B>", dfa$cases, "</B></p>
+                                                                      <p>Deaths: <B>", dfa$deaths[pep], "</B></p>
                                                                       <p>DATA: <B>https://coronadatascraper.com</B></p></font>"))
-# addCircleMarkers(radius = normalized * 15, popup = paste("Estimate: ", df$Admin2, " Parish/County, ", df$Province_State, "has<B>", df$Confirmed, "</B>cases of COVID-19, on",
-#                         df$Last_Update, ". DATA: JHU-CSSE"))
+
 
 
 ## Normalize
 (df$Confirmed - min(df$Confirmed)) / (max(df$Confirmed) - min(df$Confirmed))
 
-paste("Estimate from county level data points -- (2 degree Longitude, 2 degree Latitude square) In this", 
-      my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
-      my_people_out_usa$lat_miles[pep] * 2, "mile tall area, there are an estimated <B>", 
-      my_people_out_usa$cases[pep], "</B> confirmed cases of COVID-19. DATA: https://coronadatascraper.com")
-
-paste("Estimate from county level data points. In this square there are an estimated, ", my_people_out_usa$population[pep], " people. There are<B>", 
-      my_people_out_usa$cases[pep], "</B> cases of COVID-19, and<B>", my_people_out_usa$deaths[pep], "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")) %>%
-  addCircleMarkers(fillOpacity = dfa$cases, radius = 5, popup = paste("ESTIMATE: ", 
-                                                                      dfa$county, " , ", dfa$state, "has<B>", 
-                                                                      dfa$cases, "</B>cases of COVID-19, and<B>", my_people_out_usa$deaths[pep], "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")
-                   
+# paste("Estimate from county level data points -- (2 degree Longitude, 2 degree Latitude square) In this", 
+#       my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
+#       my_people_out_usa$lat_miles[pep] * 2, "mile tall area, there are an estimated <B>", 
+#       my_people_out_usa$cases[pep], "</B> confirmed cases of COVID-19. DATA: https://coronadatascraper.com")
+# 
+# paste("Estimate from county level data points. In this square there are an estimated, ", my_people_out_usa$population[pep], " people. There are<B>", 
+#       my_people_out_usa$cases[pep], "</B> cases of COVID-19, and<B>", my_people_out_usa$deaths[pep], "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")) %>%
+#   addCircleMarkers(fillOpacity = dfa$cases, radius = 5, popup = paste("ESTIMATE: ", 
+#                                                                       dfa$county, " , ", dfa$state, "has<B>", 
+#                                                                       dfa$cases, "</B>cases of COVID-19, and<B>", my_people_out_usa$deaths[pep], "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")
+   
+                   # addCircleMarkers(radius = normalized * 15, popup = paste("Estimate: ", df$Admin2, " Parish/County, ", df$Province_State, "has<B>", df$Confirmed, "</B>cases of COVID-19, on",
+                   #                         df$Last_Update, ". DATA: JHU-CSSE"))            
                    
 ## PUBLISH TEXT
 # Experimental
-# Click Square -- COVID-19 Map -- DATA: https://coronadatascraper.com 
-# Check state and territorial health departments. 
-# Estimate COVID-19 cases from county level data points. DATA: https://coronadatascraper.com
+# Click Square -- COVID-19 Map -- DATA: https://coronadatascraper.com
+# Check state and territorial health departments.
+# Estimate COVID-19 cases from county level data points. 
+# DATA: https://coronadatascraper.com
 # covid_baton_rouge
 
 
