@@ -97,7 +97,7 @@ timeseries_data[!is.na(timeseries_data$city), ]
 ## Tidy data is one observation per row
 ## Are there sums already built in from all... states = USA?
 timeseries_data %>%
-  filter(date == "2020-03-28") %>%
+  filter(date == "2020-04-01") %>%
   filter(country == "USA", state == "NY") %>%
   # group_by(state, url) %>%
   summarise(total = sum(cases, na.rm = TRUE)) %>%
@@ -113,7 +113,7 @@ timeseries_data %>%
 timeseries_data %>%
   filter(country == "USA") %>%
   group_by(state) %>%
-  filter(state == "CA", date == "2020-03-29", county != "NA") %>%
+  filter(state == "CA", date == "2020-04-01", county != "NA") %>%
   summarise(total = sum(cases, na.rm = TRUE))
 ## game changer, county != "NA"
 ## MARCH 26 AR = 349, CA = 4040
