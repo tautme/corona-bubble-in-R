@@ -82,12 +82,14 @@ glimpse(data_snap)
 # data_all <- data_snap %>% filter(aggregate == "county")
 
 ## cut data #######
-data_all <- data_snap %>% filter(!is.na(county), !is.na(state))
-data_all %>% filter(country == "USA") %>% summarise(earth = sum(cases, na.rm = TRUE))
-data_all %>% filter(country == "USA", state == "AR") %>% summarise(earth = sum(cases, na.rm = TRUE))
+is.na(data_snap$county)
+data_all <- data_snap %>% filter(level != county)
+# data_all <- data_snap %>% filter(!is.na(county), !is.na(state))
+data_all %>% filter(country == "United States") %>% summarise(usa = sum(cases, na.rm = TRUE))
+data_all %>% filter(country == "United States", state == "Arkansas") %>% summarise(ar = sum(cases, na.rm = TRUE))
 
 my_people$name
-pep <- 12
+pep <- 1
 ## this out is wrong, but I need it to create the out variable
 out <- data_all %>%
   filter(  lat <= my_people$latitude[pep] + lat_buffer
@@ -212,19 +214,19 @@ leaflet(df) %>%
 ## plot w/ county #######
 ## recreate plot from JHU with square and all county counts
 dfa <- data_all %>% 
-  filter(country == "USA", 
-         state %in% c("AR", "LA", "MS", "OK", "TX"),
+  filter(country == "United States", 
+         state %in% c("Arkansas", "Louisiana", "Mississippi", "Oklahoma", "Texas"),
          # !is.na(Admin2),
          lat != 0)
 
 pep <- 5
-names(dfa)[11] <- "latitude"
-names(dfa)[12] <- "longitude"
+names(dfa)[13] <- "latitude"
+names(dfa)[14] <- "longitude"
 
 coordinates(dfa) <- ~longitude+latitude
 
 ## Normalize
-normalized <- (dfa$Confirmed - min(dfa$Confirmed)) / (max(dfa$Confirmed) - min(dfa$Confirmed))
+normalized <- (dfa$cases - min(dfa$cases)) / (max(dfa$cases) - min(dfa$cases))
 
 leaflet(dfa) %>% 
   addTiles() %>%
@@ -238,9 +240,9 @@ leaflet(dfa) %>%
                               <p>Deaths: <B>", my_people_out_usa$deaths[pep], "</B></p>
                               DATA: <B>https://coronadatascraper.com</B></font>")) %>%
   addCircleMarkers(fillOpacity = dfa$cases, radius = 5, popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
-                                                                      "<p>Population: <B>", my_people_out_usa$population[pep], "</B></p>
+                                                                      "<p>Population: <B>", dfa$population, "</B></p>
                                                                       <p>Cases: <B>", dfa$cases, "</B></p>
-                                                                      <p>Deaths: <B>", dfa$deaths[pep], "</B></p>
+                                                                      <p>Deaths: <B>", dfa$deaths, "</B></p>
                                                                       <p>DATA: <B>https://coronadatascraper.com</B></p></font>"))
 
 
@@ -266,7 +268,7 @@ leaflet(dfa) %>%
 # Experimental
 # Click Square -- COVID-19 Map -- DATA: https://coronadatascraper.com
 # Check state and territorial health departments.
-# Estimate COVID-19 cases from county level data points. 
+# Estimate COVID-19 cases from county level data points.
 # DATA: https://coronadatascraper.com
 # covid_baton_rouge
 
