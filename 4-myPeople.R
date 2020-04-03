@@ -55,29 +55,27 @@ num <- dim(my_people)[1]
 #   filter(date == today) 
 
 ## load data ######
-data_snap <- read_csv("raw_data/data.csv", col_types = cols(
-                        city = col_character(),
-                        county = col_character(),
-                        state = col_character(),
-                        country = col_character(),
-                        cases = col_double(),
-                        deaths = col_double(),
-                        recovered = col_double(),
-                        tested = col_double(),
-                        active = col_double(),
-                        population = col_double(),
-                        lat = col_double(),
-                        long = col_double(),
-                        url = col_character(),
-                        aggregate = col_character(),
-                        rating = col_double(),
-                        tz = col_character(),
-                        featureId = col_double(),
-                        hospitalized = col_double()
-                      ))
+data_snap <- read_csv("raw_data/data.csv", 
+                        col_types = cols(.default = col_character(),
+                                        city = col_character(),
+                                        cases = col_double(),
+                                        deaths = col_double(),
+                                        recovered = col_double(),
+                                        tested = col_double(),
+                                        active = col_double(),
+                                        population = col_double(),
+                                        lat = col_double(),
+                                        long = col_double(),
+                                        rating = col_double(),
+                                        hospitalized = col_double()
+                                        ))
 
 
 names(data_snap)
+glimpse(data_snap)
+
+
+
 ## For Mypeople bubble count, I must remove the sum duplicates
 # data_snap %>% filter(aggregate == "county")
 ## looks like aggregate broke
