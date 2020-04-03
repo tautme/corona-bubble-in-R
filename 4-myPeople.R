@@ -55,7 +55,28 @@ num <- dim(my_people)[1]
 #   filter(date == today) 
 
 ## load data ######
-data_snap <- read_csv("raw_data/data.csv")
+data_snap <- read_csv("raw_data/data.csv", col_types = cols(
+                        city = col_character(),
+                        county = col_character(),
+                        state = col_character(),
+                        country = col_character(),
+                        cases = col_double(),
+                        deaths = col_double(),
+                        recovered = col_double(),
+                        tested = col_double(),
+                        active = col_double(),
+                        population = col_double(),
+                        lat = col_double(),
+                        long = col_double(),
+                        url = col_character(),
+                        aggregate = col_character(),
+                        rating = col_double(),
+                        tz = col_character(),
+                        featureId = col_double(),
+                        hospitalized = col_double()
+                      ))
+
+
 names(data_snap)
 ## For Mypeople bubble count, I must remove the sum duplicates
 data_snap %>% filter(aggregate == "county")
@@ -68,7 +89,7 @@ data_all %>% filter(country == "USA") %>% summarise(earth = sum(cases, na.rm = T
 data_all %>% filter(country == "USA", state == "AR") %>% summarise(earth = sum(cases, na.rm = TRUE))
 
 my_people$name
-pep <- 12
+pep <- 14
 ## this out is wrong, but I need it to create the out variable
 out <- data_all %>%
   filter(  lat <= my_people$latitude[pep] + lat_buffer

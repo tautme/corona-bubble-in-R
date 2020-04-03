@@ -27,7 +27,7 @@ adj_co <- as.data.frame(adj_co)
 
 ## rearrange #####
 # adj_co %>% spread(fips, fips.adjacent)
-adj_co
+dt_adj_co <- adj_co
 # adj_co %>% group_by(fips)
 
 
@@ -59,21 +59,25 @@ dat <- read.table(header=TRUE, stringsAsFactors=TRUE, text="
 
 dat
 dat %>% class()
+glimpse(dat)
 
-# make graph ##########
-library(tidyverse)
-library(igraph)
-library(jsonlite)
-gdat <- select(dat, head, child)
-mdat <- as.matrix(gdat)
-edge_dat <- graph_from_edgelist(mdat)
-# plot.igraph(edge_dat)
-jdat <- toJSON(mdat, matrix = "rowmajor")
+# # make graph ##########
+# library(tidyverse)
+# library(igraph)
+# library(jsonlite)
+# gdat <- select(dat, head, child)
+# mdat <- as.matrix(gdat)
+# edge_dat <- graph_from_edgelist(mdat)
+# # plot.igraph(edge_dat)
+# jdat <- toJSON(mdat, matrix = "rowmajor")
 
+df_adj_co
+glimpse(df_adj_co)
 library(data.table)
 setDT(dat)
 dat %>% class()
-# dat_child <- dat[(logic)]
+glimpse(dat)
+dat_child <- dat[(logic)]
 dat_child <- dat
 dat_child %>% class()
 dat_child <- dat_child[,.(list(unique(child))), by = "head"]
@@ -82,6 +86,7 @@ class(dat_child$V1)
 dat_child[3,2]
 dat_child
 dat_child$V1[[3]]
+
 ##
 ##
 ##
@@ -89,6 +94,9 @@ dat_child$V1[[3]]
 ## use stackexchange soultion from linog
 names(adj_co)
 head(adj_co)
+library(data.table)
+setDT(adj_co)
+adj_co
 class(adj_co)
 adj_co <- adj_co[("adj.logic")]
 head(adj_co)
@@ -96,7 +104,11 @@ adj_co_short <- adj_co[,.(list(unique("fips.adjacent"))), by = "fips"]
 ## You have many options, depending on how you want to handle them later. 
 ## You can use list columns as you proposed, standard lists (use split(dat_child, by = "head") instead), 
 ## nested data (either nested data.table or nested tibble). 
-## This is really what you will do later that will determine the most appropriate structure 
+## This is really what you will do later that will determine the most appropriate structure. -linog 
+
+
+
+
 
 ## make number
 # adj_co$fips <- as.numeric(adj_co$fips)
