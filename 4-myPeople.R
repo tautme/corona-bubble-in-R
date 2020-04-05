@@ -6,9 +6,12 @@ lat_buffer <- 1
 
 my_people <- 
   tibble(    c(1:34),
-  c("Crawfordville", "LittleRock", "NewOrleans", "London", "NewYorkCity", "Melissa", "WarnerRobins", 
-    "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", "Leesburg", "Smackover", "RoundTop", 
-    "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", 
+  c("Crawfordville", "LittleRock", "NewOrleans", "London", "NewYorkCity", 
+    "Melissa", "WarnerRobins", 
+    "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", 
+    "Leesburg", "Smackover", "RoundTop", 
+    "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", 
+    "Melbourne", "Victoria", "LosAngeles", "Poole", 
     "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", 
     "Pittsburg", "BatonRouge" ),
   c("FL", "AR", "LA", "ENG", "NY", "TX", "GA", "AZ", "KS", "CO", 
@@ -17,7 +20,8 @@ my_people <-
   c("Jan", "Anne", "NewOrleans", "London", "NYC", "Wayne", "Garrett", "Jaber", "Daniel", 
     "Chase", "Bliss", "Adam", "Grandma", "Mom",  "Dad",  "Chance", "Ohio", 
     "RI",  "Helwan", "Ahmed", "Ben", "Victoria", 
-    "Ryan",    "Rob", "CMU", "PIT",    "ATL", "Annapolis", "Ozy", "Justin", "Joshua", "Haley", "Don", "Benee"),
+    "Ryan",    "Rob", "CMU", "PIT",    "ATL", "Annapolis", "Ozy", 
+    "Justin", "Joshua", "Haley", "Don", "Benee"),
   c(-84.39, -92.41, -90.10, -0.11, -73.99, -96.56, -83.60, -112.07, -94.68, 
     -104.94, -122.25, -94.16, -81.87,     -92.73, -96.80, 
     -117.12, -81.24,  -71.32, 31.33,  -116.39,  145.04, -123.37,    
@@ -188,22 +192,39 @@ my_people_out %>%
   mutate(case_per_capita = cases / population, death_per_capita = deaths / population) %>% 
   arrange(desc(population))
 
-write_csv(my_people_out, paste0("data/", format(Sys.time(), "%Y%m%d%H%M"), "_my_people_cds_snapshot.csv"))
+write_csv(my_people_out, 
+          paste0("data/", format(Sys.time(), "%Y%m%d%H%M"), "_my_people_cds_snapshot.csv"))
 
 
 
-## Map ##########
+## Map People ##########
 # install.packages(c("leaflet", "sp"))
 library(sp)
 library(leaflet)
 my_people_out_usa <- my_people_out %>% filter(longitude < -20)
 df <- my_people_out_usa
+my_people_out_usa$name
 coordinates(df) <- ~longitude+latitude
+pep <- 3
+df$name
 
 leaflet(df) %>% 
-  addMarkers(popup = paste(df$name[pep], "has", df$cases[pep], "cases of COVID-19,", 
-                           " approximatly ", df$lon_miles[pep], 
-                           "miles radius around them. DATA:https://coronadatascraper.com")) %>%
+  addMarkers(popup = paste(df$name, "has", df$cases, "cases of COVID-19,", 
+                            df$deaths, "deaths,", df$tested, "tested",
+                           " approximatly ", df$lon_miles, 
+                           "miles radius around them. DATA:coronadatascraper.com"),
+             # fillOpacity = df$deaths / 80, 
+             # radius = 5,
+             # weight = 1
+             ) %>%
+  # addCircleMarkers(map = dfa, 
+  #                  fillOpacity = dfa$deaths,
+  #                  popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
+  #                                "<p>Population: <B>", dfa$population, "</B></p>
+  #                               <p>Cases: <B>", dfa$cases, "</B></p>
+  #                               <p>Deaths: <B>", dfa$deaths, "</B></p>
+  #                               <p>DATA: <B>https://coronadatascraper.com</B></p></font>")
+  #                  ) %>%
   # addCircleMarkers(radius = 10) %>%
   addRectangles(lat2 = my_people_out_usa$latitude[pep] + lat_buffer,
                 lat1 = my_people_out_usa$latitude[pep] - lat_buffer,
@@ -212,9 +233,11 @@ leaflet(df) %>%
                 popup = paste("Estimate from county level data points --" , 
                               "(2 degree Longitude, 2 degree Latitude square) In this", 
                               my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
-                              my_people_out_usa$lat_miles[pep] * 2, "mile tall area, there are an estimated <B>", 
+                              my_people_out_usa$lat_miles[pep] * 2, 
+                              "mile tall area, there are an estimated <B>", 
                               my_people_out_usa$cases[pep], 
-                              "</B> confirmed cases of COVID-19. DATA:https://coronadatascraper.com")) %>%
+                              "</B> confirmed cases of COVID-19.", 
+                              "DATA:https://coronadatascraper.com")) %>%
   # addCircles(radius = df$cases * df$deaths / 10) %>%
   # labelOptions() %>%
   addTiles()
@@ -264,24 +287,28 @@ leaflet(dfa) %>%
 ## Normalize
 (dfa$cases - min(dfa$cases)) / (max(dfa$cases) - min(dfa$cases)) %>% max()
 
-# paste("Estimate from county level data points -- (2 degree Longitude, 2 degree Latitude square) In this",
+# paste("Estimate from county level data points --", 
+#       "(2 degree Longitude, 2 degree Latitude square) In this",
 #       my_people_out_usa$lon_miles[pep] * 2, "mile wide and ",
 #       my_people_out_usa$lat_miles[pep] * 2, "mile tall area, there are an estimated <B>",
-#       my_people_out_usa$cases[pep], "</B> confirmed cases of COVID-19. DATA: https://coronadatascraper.com")
+#       my_people_out_usa$cases[pep], 
+#       "</B> confirmed cases of COVID-19. DATA: https://coronadatascraper.com")
 # 
-# paste("Estimate from county level data points. In this square there are an estimated, ", 
+# paste("Estimate from county level data points. In this square there are an estimated, ",
 #       my_people_out_usa$population[pep], " people. There are<B>",
-#       my_people_out_usa$cases[pep], "</B> cases of COVID-19, and<B>", my_people_out_usa$deaths[pep], 
+#       my_people_out_usa$cases[pep], 
+#       "</B> cases of COVID-19, and<B>", my_people_out_usa$deaths[pep],
 #       "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")) %>%
-#   addCircleMarkers(fillOpacity = dfa$cases, 
+#   addCircleMarkers(fillOpacity = dfa$cases,
 #                    radius = 5, popup = paste("ESTIMATE: ",
 #                             dfa$county, " , ", dfa$state, "has<B>",
-#                             dfa$cases, "</B>cases of COVID-19, and<B>", my_people_out_usa$deaths[pep], 
+#                             dfa$cases, "</B>cases of COVID-19, and<B>", 
+#                             my_people_out_usa$deaths[pep],
 #                             "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")
-#    
-#    addCircleMarkers(radius = normalized * 15, 
-#                     popup = paste("Estimate: ", 
-#                        df$Admin2, " Parish/County, ", df$Province_State, "has<B>", 
+# 
+#    addCircleMarkers(radius = normalized * 15,
+#                     popup = paste("Estimate: ",
+#                        df$Admin2, " Parish/County, ", df$Province_State, "has<B>",
 #                        df$Confirmed, "</B>cases of COVID-19, on",
 #                            df$Last_Update, ". DATA: JHU-CSSE"))
                    

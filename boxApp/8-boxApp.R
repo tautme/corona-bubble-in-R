@@ -13,16 +13,16 @@ library(shiny)
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("Coronavirus Region Data coronadatascraper.com"),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+            sliderInput("buffer",
+                        "Radius of Count:",
+                        min = 0,
+                        max = 5,
+                        value = 5)
         ),
 
         # Show a plot of the generated distribution
@@ -39,10 +39,10 @@ server <- function(input, output) {
     output$distPlot <- renderPlot({
         # generate bins based on input$bins from ui.R
         x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        buffer <- seq(min(x), max(x), length.out = input$buffer + 1)
 
         # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+        hist(x, breaks = buffer)
     })
 }
 

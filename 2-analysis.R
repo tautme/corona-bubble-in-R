@@ -205,22 +205,22 @@ circumference / 360
 
 
 ## USA State #######
-timeseries_data_clean_usa_state %>%
-  # filter(long < -100) %>%
-  filter(long > -75) %>%
-  group_by(state) %>%
-  # filter(state == "NJ") %>%
-  ggplot(aes(date, cases, color = state)) +
-    geom_line()
-
-c("Arkansas", "Louisiana", "New York", "California", "Texas")
-c("AR", "LA", "NY", "CA", "TX")
-
-timeseries_data_clean_usa_state %>% filter(state %in% c("Arkansas", "Louisiana", "New York", "California", "Texas")
-) %>%
-  # group_by(state) %>%
-  ggplot(aes(date, cases, color = state)) +
-    geom_line()
+# timeseries_data_clean_usa_state %>%
+#   # filter(long < -100) %>%
+#   filter(long > -75) %>%
+#   group_by(state) %>%
+#   # filter(state == "NJ") %>%
+#   ggplot(aes(date, cases, color = state)) +
+#     geom_line()
+# 
+# c("Arkansas", "Louisiana", "New York", "California", "Texas")
+# c("AR", "LA", "NY", "CA", "TX")
+# 
+# timeseries_data_clean_usa_state %>% filter(state %in% c("Arkansas", "Louisiana", "New York", "California", "Texas")
+# ) %>%
+#   # group_by(state) %>%
+#   ggplot(aes(date, cases, color = state)) +
+#     geom_line()
   
 
 ## Why is ALASKA long > -75? +0.7 degree long
