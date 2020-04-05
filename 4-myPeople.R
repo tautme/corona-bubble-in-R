@@ -300,13 +300,13 @@ for(x in c(1:num)) {
 outi %>%
   ggplot(aes(x = radius, y = cases)) +
     geom_line() +
-    ggtitle(paste("Estimated COVID-19 cases in ", my_people$city[pep], ", ", 
+    ggtitle(paste0("Estimate COVID-19 around ", my_people$city[pep], ", ", 
                   my_people$region[pep], 
-                  # " -- (Longitude, Latitude) -- (", 
-                  my_people$longitude[pep], ", ", my_people$latitude[pep], 
-                  ") -- 2020 April 03 -- Data: coronadatascraper.com")) +
+                  # " -- (Longitude, Latitude) --", 
+                  " (", my_people$longitude[pep], ", ", my_people$latitude[pep], 
+                  ")")) +
     xlab("Degrees Longitude & Latitude Away") +
-    annotate("text", x = 1, y = 300, label = "data source: coronadatascraper.com")
+    annotate("text", x = 1.5, y = 300, label = "data source: coronadatascraper.com  2020 April 03")
       
 
 ## add information about miles from degree longitude
