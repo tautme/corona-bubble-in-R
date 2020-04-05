@@ -4,37 +4,23 @@ library(tidyverse)
 lon_buffer <- 1
 lat_buffer <- 1
 
-my_people <- tibble(    c(1:32),
-                        c("NewOrleans", "London", "NewYorkCity", "Melissa", "WarnerRobins", "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
-                        c("LA", "ENG", "NY", "TX", "GA", "AZ", "KS", "CO", "CA", "AR", "FL", "AR", "TX", "CA", "OH", "RI", "EGY", "CA", "AUS", "CAN",                                                               "CA", "ENG", "PA", "PA", "GA", "MD", "BAH", "CT", "VT", "AR", "KS", "LA" ),
-                        c("NewOrleans", "London", "NYC", "Wayne", "Garrett", "Jaber", "Daniel", "Chase", "Bliss", "Adam", "Grandma", "Mom",  "Dad",  "Chance", "Ohio", "RI",  "Helwan", "Ahmed", "Ben", "Victoria", "Ryan",    "Rob", "CMU", "PIT",    "ATL", "Annapolis", "Ozy", "Justin", "Joshua", "Haley", "Don", "Benee"),
-                        c(-90.10, -0.11, -73.99, -96.56, -83.60, -112.07, -94.68, -104.94, -122.25, -94.16, -81.87,     -92.73, -96.80, -117.12, -81.24,  -71.32, 31.33,  -116.39,  145.04, -123.37,    -118.44,  -2.00, -79.95,-80.25, -84.43,  -76.54,     -77.29, -72.64,   -72.57,   -93.13,        -94.70, -91.20),
-                        c(29.95, 51.52, 40.74, 33.27, 32.61, 33.49, 38.98, 39.60, 37.81, 36.07,  28.73,      33.36,  29.98,  32.80,   41.16,  41.74,  29.84,  33.73,   -36.83,  48.47,      34.07,    50.71, 40.44, 40.50,  33.64,   38.79,       25.04,  41.85 ,   44.26,   35.27,         37.40,  30.45), 
+my_people <- tibble(    c(1:34),
+                        c("Crawfordville", "LittleRock", "NewOrleans", "London", "NewYorkCity", "Melissa", "WarnerRobins", "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
+                        c("FL", "AR", "LA", "ENG", "NY", "TX", "GA", "AZ", "KS", "CO", "CA", "AR", "FL", "AR", "TX", "CA", "OH", "RI", "EGY", "CA", "AUS", "CAN",                                                               "CA", "ENG", "PA", "PA", "GA", "MD", "BAH", "CT", "VT", "AR", "KS", "LA" ),
+                        c("Jan", "Anne", "NewOrleans", "London", "NYC", "Wayne", "Garrett", "Jaber", "Daniel", "Chase", "Bliss", "Adam", "Grandma", "Mom",  "Dad",  "Chance", "Ohio", "RI",  "Helwan", "Ahmed", "Ben", "Victoria", "Ryan",    "Rob", "CMU", "PIT",    "ATL", "Annapolis", "Ozy", "Justin", "Joshua", "Haley", "Don", "Benee"),
+                        c(-84.39, -92.41, -90.10, -0.11, -73.99, -96.56, -83.60, -112.07, -94.68, -104.94, -122.25, -94.16, -81.87,     -92.73, -96.80, -117.12, -81.24,  -71.32, 31.33,  -116.39,  145.04, -123.37,    -118.44,  -2.00, -79.95,-80.25, -84.43,  -76.54,     -77.29, -72.64,   -72.57,   -93.13,        -94.70, -91.20),
+                        c(30.19, 34.74, 29.95, 51.52, 40.74, 33.27, 32.61, 33.49, 38.98, 39.60, 37.81, 36.07,  28.73,      33.36,  29.98,  32.80,   41.16,  41.74,  29.84,  33.73,   -36.83,  48.47,      34.07,    50.71, 40.44, 40.50,  33.64,   38.79,       25.04,  41.85 ,   44.26,   35.27,         37.40,  30.45), 
                         .name_repair = ~ c("number", "city", "region",  "name", "longitude", "latitude"))
 
 # names(my_people) <- c("name", "longitude", "latitude")
 num <- dim(my_people)[1]
 
-## choose data ############
-## timeseries cds
-# data_time <- read_csv("data/cds_timeseries_spread.csv", col_types = cols(
-#   city = col_character(),
-#   county = col_character(),
-#   state = col_character(),
-#   country = col_character(),
-#   population = col_double(),
-#   lat = col_double(),
-#   long = col_double(),
-#   url = col_character(),
-#   cases = col_double(),
-#   deaths = col_double(),
-#   recovered = col_double(),
-#   active = col_double(),
-#   tested = col_double(),
-#   date = col_date(format = "")
-# ))
+names(data_time)
+# ##make to run like snap_data
+# time_snap <- data_time %>%
+data_time <-data_time %>% select(-growthFactor)
 
-# data <- read_csv("/Users/adamhughes/coronadatascraper/dist/data.csv", 
+# data <- read_csv("/Users/adamhughes/Documents/coronadatascraper/dist/data.csv",
 #                  col_types = cols(
 #                    .default = col_double(),
 #                    city = col_character(),
@@ -49,10 +35,6 @@ num <- dim(my_people)[1]
 #                    curators = col_character()
 #                  ))
 
-
-# today <- max(data_time$date)
-# data_time <- time_data_out %>%
-#   filter(date == today) 
 
 ## load data ######
 data_snap <- read_csv("raw_data/data.csv", 
@@ -181,7 +163,9 @@ my_people_out %>%
          cases, deaths, recovered, active) %>%
   arrange(desc(cases), desc(deaths))
 
-my_people_out %>% mutate(case_per_capita = cases / population, death_per_capita = deaths / population) %>% arrange(desc(population))
+my_people_out %>% 
+  mutate(case_per_capita = cases / population, death_per_capita = deaths / population) %>% 
+  arrange(desc(population))
 
 write_csv(my_people_out, paste0("data/", format(Sys.time(), "%Y%m%d%H%M"), "_my_people_cds_snapshot.csv"))
 
@@ -215,18 +199,20 @@ leaflet(df) %>%
 ## recreate plot from JHU with square and all county counts
 dfa <- data_all %>% 
   filter(country == "United States", 
-         state %in% c("Arkansas", "Louisiana", "Mississippi", "Oklahoma", "Texas"),
+         # state %in% c("Arkansas", "Louisiana", "Mississippi", "Oklahoma", "Texas", "California"),
          # !is.na(Admin2),
          lat != 0)
 
-pep <- 5
+my_people_out_usa$name
+pep <- 6
 names(dfa)[13] <- "latitude"
 names(dfa)[14] <- "longitude"
 
 coordinates(dfa) <- ~longitude+latitude
 
 ## Normalize
-normalized <- (dfa$cases - min(dfa$cases)) / (max(dfa$cases) - min(dfa$cases))
+normalized <- (dfa$cases - min(dfa$cases)) / (max(dfa$cases) - min(dfa$cases)) * 10
+median(normalized)
 
 leaflet(dfa) %>% 
   addTiles() %>%
@@ -239,16 +225,18 @@ leaflet(dfa) %>%
                               <p>Cases: <B>", my_people_out_usa$cases[pep], "</B></p>
                               <p>Deaths: <B>", my_people_out_usa$deaths[pep], "</B></p>
                               DATA: <B>https://coronadatascraper.com</B></font>")) %>%
-  addCircleMarkers(fillOpacity = dfa$cases, radius = 5, popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
-                                                                      "<p>Population: <B>", dfa$population, "</B></p>
-                                                                      <p>Cases: <B>", dfa$cases, "</B></p>
-                                                                      <p>Deaths: <B>", dfa$deaths, "</B></p>
-                                                                      <p>DATA: <B>https://coronadatascraper.com</B></p></font>"))
+  addCircleMarkers(fillOpacity = dfa$deaths, 
+                   radius = normalized, 
+                   popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
+                                "<p>Population: <B>", dfa$population, "</B></p>
+                                <p>Cases: <B>", dfa$cases, "</B></p>
+                                <p>Deaths: <B>", dfa$deaths, "</B></p>
+                                <p>DATA: <B>https://coronadatascraper.com</B></p></font>"))
 
 
 
 ## Normalize
-(df$Confirmed - min(df$Confirmed)) / (max(df$Confirmed) - min(df$Confirmed))
+(dfa$cases - min(dfa$cases)) / (max(dfa$cases) - min(dfa$cases)) %>% max()
 
 # paste("Estimate from county level data points -- (2 degree Longitude, 2 degree Latitude square) In this", 
 #       my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
@@ -278,42 +266,47 @@ leaflet(dfa) %>%
 
 ## As you increase the radius, how does increase plot
 ## radius vs. cases #########
+
 my_radius <- seq(0, 2.5, by = 0.2)
 my_radius[1]
 num <- length(my_radius)
+names(data_all)
 
-outi <- today %>%
-  filter(    Lat <= my_people$latitude[1] + my_radius[1]
-             & Lat >= my_people$latitude[1] - my_radius[1]
-             & Long_ <= my_people$longitude[1] + my_radius[1]
-             & Long_ >= my_people$longitude[1] - my_radius[1]) %>%
-  summarise(confirmed = sum(Confirmed),
-            deaths = sum(Deaths)) %>%
+outi <- data_all %>%
+  filter(    lat <= my_people$latitude[1] + my_radius[1]
+             & lat >= my_people$latitude[1] - my_radius[1]
+             & long <= my_people$longitude[1] + my_radius[1]
+             & long >= my_people$longitude[1] - my_radius[1]) %>%
+  summarise(cases = sum(cases),
+            deaths = sum(deaths)) %>%
   mutate(radius = my_radius[1])
 
 my_people$name
-# pep <- 24
+pep <- 34
 
 for(x in c(1:num)) {
-  outi[x, ] <- today %>%
-    filter(    Lat <= my_people$latitude[pep] + my_radius[x]
-               & Lat >= my_people$latitude[pep] - my_radius[x]
-               & Long_ <= my_people$longitude[pep] + my_radius[x]
-               & Long_ >= my_people$longitude[pep] - my_radius[x]) %>%
-    summarise(confirmed = sum(Confirmed),
-              deaths = sum(Deaths)) %>%
+  outi[x, ] <- data_all %>%
+    filter(    lat <= my_people$latitude[pep] + my_radius[x]
+               & lat >= my_people$latitude[pep] - my_radius[x]
+               & long <= my_people$longitude[pep] + my_radius[x]
+               & long >= my_people$longitude[pep] - my_radius[x]) %>% 
+    summarise(cases = sum(cases),
+              deaths = sum(deaths, na.rm = TRUE)) %>%
     mutate(radius = my_radius[x])
 }
 
 # max(today$date)
 
 outi %>%
-  ggplot(aes(x = radius, y = confirmed)) +
+  ggplot(aes(x = radius, y = cases)) +
     geom_line() +
-    ggtitle(paste("Estimated COVID-19 cases in ", my_people$city[pep], ", ", my_people$region[pep], " -- (Longitude, Latitude) -- (", 
-                  my_people$longitude[pep], ", ", my_people$latitude[pep], ") -- 2020 March 31 -- Data: JHU-CSSE")) +
-    xlab("Degrees Longitude & Latitude Away") #+
-    # annotate("text", x = 1, y = 4500, label = "data source: coronadatascraper.com")
+    ggtitle(paste("Estimated COVID-19 cases in ", my_people$city[pep], ", ", 
+                  my_people$region[pep], 
+                  # " -- (Longitude, Latitude) -- (", 
+                  my_people$longitude[pep], ", ", my_people$latitude[pep], 
+                  ") -- 2020 April 03 -- Data: coronadatascraper.com")) +
+    xlab("Degrees Longitude & Latitude Away") +
+    annotate("text", x = 1, y = 300, label = "data source: coronadatascraper.com")
       
 
 ## add information about miles from degree longitude
@@ -323,6 +316,12 @@ radiusi <- my_radius %>% tibble() %>%
 names(radiusi)[1] <- "radius"
 
 my_radius_outi <- merge(radiusi, outi, by = "radius", all = TRUE) %>%
-  arrange(desc(deaths), desc(confirmed))
+  arrange(desc(deaths), desc(cases))
 
-write_csv(my_radius_outi, paste0("output/", format(Sys.time(), "%Y%m%d%H%M"), "_my_radius_jhu_daily.csv"))
+write_csv(my_radius_outi, paste0("data/", 
+                                 format(Sys.time(), "%Y%m%d%H%M"), 
+                                 "_my_radius_cds_daily.csv"))
+
+
+
+

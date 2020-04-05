@@ -214,9 +214,11 @@ timeseries_data_clean_usa_state %>%
     geom_line()
 
 c("Arkansas", "Louisiana", "New York", "California", "Texas")
+c("AR", "LA", "NY", "CA", "TX")
 
-timeseries_data_clean_usa_state %>% filter(state %in% c("AR", "LA", "NY", "CA", "TX")) %>%
-  group_by(state) %>%
+timeseries_data_clean_usa_state %>% filter(state %in% c("Arkansas", "Louisiana", "New York", "California", "Texas")
+) %>%
+  # group_by(state) %>%
   ggplot(aes(date, cases, color = state)) +
     geom_line()
   

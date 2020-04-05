@@ -97,8 +97,8 @@ timeseries_data[!is.na(timeseries_data$city), ]
 ## Tidy data is one observation per row
 ## Are there sums already built in from all... states = USA?
 timeseries_data %>%
-  filter(date == "2020-04-01") %>%
-  filter(country == "USA", state == "NY") %>%
+  filter(date == "2020-04-04") %>%
+  filter(country == "United States", state == "New York") %>%
   # group_by(state, url) %>%
   summarise(total = sum(cases, na.rm = TRUE)) %>%
   # filter(state != "NA") %>%
@@ -122,13 +122,13 @@ timeseries_data %>%
 
 ## Do the same sums with aggregate
 timeseries_data %>%
-  filter(country == "USA", aggregate == "county")
+  filter(country == "United States", level == "county")
 ## the aggregate doesn't make sense, go back and check snapshot data.csv
 
 timeseries_data_clean_usa_state <- timeseries_data %>%
-  filter(country == "USA", state != "NA") 
+  filter(country == "United States", state != "NA") 
 timeseries_data_clean_usa_state <- timeseries_data_clean_usa_state[is.na(timeseries_data_clean_usa_state$county), ]
-timeseries_data_clean_usa_state <- timeseries_data_clean_usa_state[is.na(timeseries_data_clean_usa_state$city), ]
+# timeseries_data_clean_usa_state <- timeseries_data_clean_usa_state[is.na(timeseries_data_clean_usa_state$city), ]
 
 ## Now that we have aggregate, it should be easier to remove sum observations
 
@@ -140,9 +140,9 @@ timeseries_data$state %>% is.na() %>% sum()
 timeseries_data$growthFactor %>% is.na() %>% sum()
 datet <- max(timeseries_data$date)
 datet
-timeseries_data %>%
-  filter(date == datet) %>%
-  select(growthFactor) %>% is.na() %>% sum()
+# timeseries_data %>%
+#   filter(date == datet) %>%
+#   select(growthFactor) %>% is.na() %>% sum()
 ## some of the 268 latest dates still donot have a growthfactor, so remove
 
 timeseries_data_clean <- timeseries_data %>%
