@@ -4,21 +4,40 @@ library(tidyverse)
 lon_buffer <- 1
 lat_buffer <- 1
 
-my_people <- tibble(    c(1:34),
-                        c("Crawfordville", "LittleRock", "NewOrleans", "London", "NewYorkCity", "Melissa", "WarnerRobins", "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", "Leesburg", "Smackover", "RoundTop", "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", "Pittsburg", "BatonRouge" ),
-                        c("FL", "AR", "LA", "ENG", "NY", "TX", "GA", "AZ", "KS", "CO", "CA", "AR", "FL", "AR", "TX", "CA", "OH", "RI", "EGY", "CA", "AUS", "CAN",                                                               "CA", "ENG", "PA", "PA", "GA", "MD", "BAH", "CT", "VT", "AR", "KS", "LA" ),
-                        c("Jan", "Anne", "NewOrleans", "London", "NYC", "Wayne", "Garrett", "Jaber", "Daniel", "Chase", "Bliss", "Adam", "Grandma", "Mom",  "Dad",  "Chance", "Ohio", "RI",  "Helwan", "Ahmed", "Ben", "Victoria", "Ryan",    "Rob", "CMU", "PIT",    "ATL", "Annapolis", "Ozy", "Justin", "Joshua", "Haley", "Don", "Benee"),
-                        c(-84.39, -92.41, -90.10, -0.11, -73.99, -96.56, -83.60, -112.07, -94.68, -104.94, -122.25, -94.16, -81.87,     -92.73, -96.80, -117.12, -81.24,  -71.32, 31.33,  -116.39,  145.04, -123.37,    -118.44,  -2.00, -79.95,-80.25, -84.43,  -76.54,     -77.29, -72.64,   -72.57,   -93.13,        -94.70, -91.20),
-                        c(30.19, 34.74, 29.95, 51.52, 40.74, 33.27, 32.61, 33.49, 38.98, 39.60, 37.81, 36.07,  28.73,      33.36,  29.98,  32.80,   41.16,  41.74,  29.84,  33.73,   -36.83,  48.47,      34.07,    50.71, 40.44, 40.50,  33.64,   38.79,       25.04,  41.85 ,   44.26,   35.27,         37.40,  30.45), 
-                        .name_repair = ~ c("number", "city", "region",  "name", "longitude", "latitude"))
+my_people <- 
+  tibble(    c(1:34),
+  c("Crawfordville", "LittleRock", "NewOrleans", "London", "NewYorkCity", "Melissa", "WarnerRobins", 
+    "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", "Leesburg", "Smackover", "RoundTop", 
+    "SanDiego", "Ravenna", "Barrington", "Helwan", "PalmDesert", "Melbourne", "Victoria", "LosAngeles", "Poole", 
+    "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", 
+    "Pittsburg", "BatonRouge" ),
+  c("FL", "AR", "LA", "ENG", "NY", "TX", "GA", "AZ", "KS", "CO", 
+    "CA", "AR", "FL", "AR", "TX", "CA", "OH", "RI", "EGY", "CA", "AUS", "CAN", 
+    "CA", "ENG", "PA", "PA", "GA", "MD", "BAH", "CT", "VT", "AR", "KS", "LA" ),
+  c("Jan", "Anne", "NewOrleans", "London", "NYC", "Wayne", "Garrett", "Jaber", "Daniel", 
+    "Chase", "Bliss", "Adam", "Grandma", "Mom",  "Dad",  "Chance", "Ohio", 
+    "RI",  "Helwan", "Ahmed", "Ben", "Victoria", 
+    "Ryan",    "Rob", "CMU", "PIT",    "ATL", "Annapolis", "Ozy", "Justin", "Joshua", "Haley", "Don", "Benee"),
+  c(-84.39, -92.41, -90.10, -0.11, -73.99, -96.56, -83.60, -112.07, -94.68, 
+    -104.94, -122.25, -94.16, -81.87,     -92.73, -96.80, 
+    -117.12, -81.24,  -71.32, 31.33,  -116.39,  145.04, -123.37,    
+    -118.44,  -2.00, -79.95,-80.25, -84.43,  -76.54,     
+    -77.29, -72.64,   -72.57,   -93.13,        -94.70, -91.20),
+  c(30.19, 34.74, 29.95, 51.52, 40.74, 33.27, 32.61, 33.49, 
+    38.98, 39.60, 37.81, 36.07,  28.73,      33.36,  29.98,  
+    32.80,   41.16,  41.74,  29.84,  33.73,   -36.83,  48.47,      
+    34.07,    50.71, 40.44, 40.50,  33.64,   38.79,       
+    25.04,  41.85 ,   44.26,   35.27,         37.40,  30.45), 
+  .name_repair = ~ c("number", "city", "region",  "name", "longitude", "latitude"))
+
 
 # names(my_people) <- c("name", "longitude", "latitude")
 num <- dim(my_people)[1]
 
-names(data_time)
-# ##make to run like snap_data
-# time_snap <- data_time %>%
-data_time <-data_time %>% select(-growthFactor)
+# names(data_time)
+# # ##make to run like snap_data
+# # time_snap <- data_time %>%
+# data_time <-data_time %>% select(-growthFactor)
 
 # data <- read_csv("/Users/adamhughes/Documents/coronadatascraper/dist/data.csv",
 #                  col_types = cols(
@@ -67,8 +86,10 @@ glimpse(data_snap)
 is.na(data_snap$county)
 data_all <- data_snap %>% filter(level != county)
 # data_all <- data_snap %>% filter(!is.na(county), !is.na(state))
-data_all %>% filter(country == "United States") %>% summarise(usa = sum(cases, na.rm = TRUE))
-data_all %>% filter(country == "United States", state == "Arkansas") %>% summarise(ar = sum(cases, na.rm = TRUE))
+data_all %>% filter(country == "United States") %>% 
+  summarise(usa = sum(cases, na.rm = TRUE))
+data_all %>% filter(country == "United States", state == "Arkansas") %>% 
+  summarise(ar = sum(cases, na.rm = TRUE))
 
 my_people$name
 pep <- 1
@@ -180,15 +201,20 @@ df <- my_people_out_usa
 coordinates(df) <- ~longitude+latitude
 
 leaflet(df) %>% 
-  addMarkers(popup = paste(df$name[pep], "has", df$cases[pep], "cases of COVID-19,", " approximatly ", df$lon_miles[pep], "miles radius around them. DATA:https://coronadatascraper.com")) %>%
+  addMarkers(popup = paste(df$name[pep], "has", df$cases[pep], "cases of COVID-19,", 
+                           " approximatly ", df$lon_miles[pep], 
+                           "miles radius around them. DATA:https://coronadatascraper.com")) %>%
   # addCircleMarkers(radius = 10) %>%
   addRectangles(lat2 = my_people_out_usa$latitude[pep] + lat_buffer,
                 lat1 = my_people_out_usa$latitude[pep] - lat_buffer,
                 lng2 = my_people_out_usa$longitude[pep] + lon_buffer, 
                 lng1 = my_people_out_usa$longitude[pep] - lon_buffer, 
-                popup = paste("Estimate from county level data points -- (2 degree Longitude, 2 degree Latitude square) In this", my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
+                popup = paste("Estimate from county level data points --" , 
+                              "(2 degree Longitude, 2 degree Latitude square) In this", 
+                              my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
                               my_people_out_usa$lat_miles[pep] * 2, "mile tall area, there are an estimated <B>", 
-                              my_people_out_usa$cases[pep], "</B> confirmed cases of COVID-19. DATA:https://coronadatascraper.com")) %>%
+                              my_people_out_usa$cases[pep], 
+                              "</B> confirmed cases of COVID-19. DATA:https://coronadatascraper.com")) %>%
   # addCircles(radius = df$cases * df$deaths / 10) %>%
   # labelOptions() %>%
   addTiles()
@@ -238,19 +264,26 @@ leaflet(dfa) %>%
 ## Normalize
 (dfa$cases - min(dfa$cases)) / (max(dfa$cases) - min(dfa$cases)) %>% max()
 
-# paste("Estimate from county level data points -- (2 degree Longitude, 2 degree Latitude square) In this", 
-#       my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
-#       my_people_out_usa$lat_miles[pep] * 2, "mile tall area, there are an estimated <B>", 
+# paste("Estimate from county level data points -- (2 degree Longitude, 2 degree Latitude square) In this",
+#       my_people_out_usa$lon_miles[pep] * 2, "mile wide and ",
+#       my_people_out_usa$lat_miles[pep] * 2, "mile tall area, there are an estimated <B>",
 #       my_people_out_usa$cases[pep], "</B> confirmed cases of COVID-19. DATA: https://coronadatascraper.com")
 # 
-# paste("Estimate from county level data points. In this square there are an estimated, ", my_people_out_usa$population[pep], " people. There are<B>", 
-#       my_people_out_usa$cases[pep], "</B> cases of COVID-19, and<B>", my_people_out_usa$deaths[pep], "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")) %>%
-#   addCircleMarkers(fillOpacity = dfa$cases, radius = 5, popup = paste("ESTIMATE: ", 
-#                                                                       dfa$county, " , ", dfa$state, "has<B>", 
-#                                                                       dfa$cases, "</B>cases of COVID-19, and<B>", my_people_out_usa$deaths[pep], "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")
-   
-                   # addCircleMarkers(radius = normalized * 15, popup = paste("Estimate: ", df$Admin2, " Parish/County, ", df$Province_State, "has<B>", df$Confirmed, "</B>cases of COVID-19, on",
-                   #                         df$Last_Update, ". DATA: JHU-CSSE"))            
+# paste("Estimate from county level data points. In this square there are an estimated, ", 
+#       my_people_out_usa$population[pep], " people. There are<B>",
+#       my_people_out_usa$cases[pep], "</B> cases of COVID-19, and<B>", my_people_out_usa$deaths[pep], 
+#       "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")) %>%
+#   addCircleMarkers(fillOpacity = dfa$cases, 
+#                    radius = 5, popup = paste("ESTIMATE: ",
+#                             dfa$county, " , ", dfa$state, "has<B>",
+#                             dfa$cases, "</B>cases of COVID-19, and<B>", my_people_out_usa$deaths[pep], 
+#                             "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")
+#    
+#    addCircleMarkers(radius = normalized * 15, 
+#                     popup = paste("Estimate: ", 
+#                        df$Admin2, " Parish/County, ", df$Province_State, "has<B>", 
+#                        df$Confirmed, "</B>cases of COVID-19, on",
+#                            df$Last_Update, ". DATA: JHU-CSSE"))
                    
 ## PUBLISH TEXT
 # Experimental
@@ -306,8 +339,11 @@ outi %>%
                   " (", my_people$longitude[pep], ", ", my_people$latitude[pep], 
                   ")")) +
     xlab("Degrees Longitude & Latitude Away") +
-    annotate("text", x = 1.5, y = 300, label = "data source: coronadatascraper.com  2020 April 03")
+    annotate("text", x = 1.5, y = 300, 
+             label = paste("data source: coronadatascraper.com", Sys.Date()))
       
+date()
+Sys.Date()
 
 ## add information about miles from degree longitude
 radiusi <- my_radius %>% tibble() %>%
