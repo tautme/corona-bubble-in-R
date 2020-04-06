@@ -392,5 +392,9 @@ write_csv(my_radius_outi, paste0("data/",
                                  "_my_radius_cds_daily.csv"))
 
 
-
+paste0("Estimate COVID-19 around ", my_people$city[pep], ", ", 
+       my_people$region[pep], 
+       # " -- (Longitude, Latitude) --", 
+       " (", my_people$longitude[pep], ", ", my_people$latitude[pep], 
+       ")")
 

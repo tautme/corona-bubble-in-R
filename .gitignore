@@ -40,6 +40,6 @@ vignettes/*.pdf
 
 
 # 4-myPeople.R
-#raw_data
+raw_data
 data
 death.txt
