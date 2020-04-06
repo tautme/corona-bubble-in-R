@@ -248,14 +248,16 @@ leaflet(df) %>%
 ## recreate plot from JHU with square and all county counts
 dfa <- data_all %>% 
   filter(country == "United States", 
-         # state %in% c("Arkansas", "Louisiana", "Mississippi", "Oklahoma", "Texas", "California"),
+         state %in% c("Arkansas", "Louisiana", "Missouri", 
+                      # "California", 
+                      "Mississippi", "Oklahoma", "Texas"),
          # !is.na(Admin2),
          lat != 0)
-
+names(dfa)
 my_people_out_usa$name
-pep <- 1
+pep <- 6
 names(dfa)[13] <- "latitude"
-names(dfa)[13] <- "longitude"
+names(dfa)[14] <- "longitude"
 
 coordinates(dfa) <- ~longitude+latitude
 
@@ -278,7 +280,8 @@ leaflet(dfa) %>%
                               <p>Deaths: <B>", my_people_out_usa$deaths[pep], "</B></p>
                               DATA: <B>https://coronadatascraper.com</B></font>")) %>%
   addCircleMarkers(fillOpacity = dfa$deaths, 
-                   radius = normalized, 
+                   radius = 4, 
+                   weight = 1,
                    popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
                                 "<p>Population: <B>", dfa$population, "</B></p>
                                 <p>Cases: <B>", dfa$cases, "</B></p>
