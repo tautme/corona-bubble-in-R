@@ -253,9 +253,9 @@ dfa <- data_all %>%
          lat != 0)
 
 my_people_out_usa$name
-pep <- 6
+pep <- 1
 names(dfa)[13] <- "latitude"
-names(dfa)[14] <- "longitude"
+names(dfa)[13] <- "longitude"
 
 coordinates(dfa) <- ~longitude+latitude
 
@@ -270,8 +270,11 @@ leaflet(dfa) %>%
                 lng2 = my_people_out_usa$longitude[pep] + lon_buffer, 
                 lng1 = my_people_out_usa$longitude[pep] - lon_buffer, 
                 popup = paste("<font size=3>ESTIMATION SQUARE:
-                              <p>Population: <B>", my_people_out_usa$population[pep], "</B></p> 
+                              <p>Population: <B>", my_people_out_usa$population[pep], "</B></p>
+                              <p>Test: <B>", my_people_out_usa$test[pep], "</B></p>
                               <p>Cases: <B>", my_people_out_usa$cases[pep], "</B></p>
+                              <p>Active: <B>", my_people_out_usa$active[pep], "</B></p>
+                              <p>Recovered: <B>", my_people_out_usa$recovered[pep], "</B></p>
                               <p>Deaths: <B>", my_people_out_usa$deaths[pep], "</B></p>
                               DATA: <B>https://coronadatascraper.com</B></font>")) %>%
   addCircleMarkers(fillOpacity = dfa$deaths, 
