@@ -23,5 +23,5 @@ Also estimate distance from an elipsoid instead of a sphere. equatorial radius =
 
 
 This is an Rsudio project.
-
-Data is downloaded from the Corona Data Scraper project. https://coronadatascraper.com/#home
+Data obtained from Corona Data Scraper 
+https://coronadatascraper.com/#home
