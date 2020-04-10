@@ -21,6 +21,27 @@ explore_data <- read_csv("raw_data/timeseries.csv",
                            date = col_date(format = "")
                          ))
 
+## timeseries tidy
+tidy_data <- read_csv("raw_data/timeseries-tidy.csv", 
+                      col_types = 
+                        cols(
+                          name = col_character(),
+                          level = col_character(),
+                          city = col_character(),
+                          county = col_character(),
+                          state = col_character(),
+                          country = col_character(),
+                          population = col_double(),
+                          lat = col_double(),
+                          long = col_double(),
+                          aggregate = col_character(),
+                          tz = col_character(),
+                          date = col_date(format = ""),
+                          type = col_character(),
+                          value = col_double()
+                        ))
+
+
 ## are there negative counts?
 explore_data %>% names()
 explore_data$level %>% as.factor() %>% levels()
@@ -36,7 +57,6 @@ explore_complete_data <- explore_data %>%
   select(-recovered, -active)
 
 explore_complete_data %>%
-  # head(50) %>%
   group_by(state, date) %>%
   summarise(tested = sum(tested, na.rm = TRUE), 
             cases = sum(cases, na.rm = TRUE)) %>%
@@ -44,6 +64,91 @@ explore_complete_data %>%
   ggplot(aes(x = date, y = tested, color = state)) +
     geom_line(aes(x = date, y = cases))
 
+## check issue #673 ##########
+## https://github.com/covidatlas/coronadatascraper/issues/673
+## https://covid-atlas.slack.com/archives/C0101BDEEDV/p1586281979468800
+max(explore_data$date)
+
+## Kansas #698
+## https://github.com/covidatlas/coronadatascraper/issues/698
+
+explore_data %>%
+  group_by(state, date) %>%
+  summarise(tested = sum(tested, na.rm = FALSE),
+            cases = sum(cases, na.rm = FALSE)) %>%
+  filter(state == c("Kansas")) %>%
+  ggplot(aes(x = date, y = cases, color = state)) +
+    geom_point() +
+    scale_x_date(date_minor_breaks = "1 day")
+    scale_x_date(date_breaks = seq("2020-03-23", "2020-04-07"))
+
+explore_state <- explore_data %>%
+  filter(state == "Kansas")
+
+explore_state %>%
+  group_by(date) %>%
+  filter(state == "Kansas") %>%
+  summarise(tested = sum(tested, na.rm = FALSE),
+            cases = sum(cases, na.rm = FALSE))
+
+explore_data %>%
+  group_by(state, date) %>%
+  summarise(tested = sum(tested, na.rm = FALSE),
+            cases = sum(cases, na.rm = FALSE)) %>%
+  filter(state %in% c("Kansas", "Alaska", "New Jersey", "South Dakota")) %>%
+  ggplot(aes(x = date, y = cases, color = state)) +
+    geom_line() +
+    facet_grid(state ~ ., scales = "free")
+
+## South Dakota
+## the decrease could be accociated with counting active cases?
+explore_data %>%
+  filter(state == "South Dakota", date > "2020-04-01") %>% 
+  group_by(county, date) %>%
+  summarise(tested = sum(tested, na.rm = FALSE),
+            cases = sum(cases, na.rm = FALSE)) %>%
+  ggplot(aes(x = date, y = cases, color = county)) +
+  geom_line() #+
+  # facet_grid(~ . county, scales = "free")
+
+## data.csv
+data_snap %>%
+  filter(state == "South Dakota") %>%
+  summarise(total = sum(cases, na.rm = TRUE))
+
+## county level
+data_snap %>% 
+  filter(state == "South Dakota") %>%
+  filter(level == "county") %>%
+  select(name, cases, deaths)
+ 
+## individual county
+# 'Aurora County',    'Beadle County',    'Bennett County',    'Bon Homme County',    'Brookings County',    'Brown County',    'Brule County',    'Buffalo County',    'Butte County',    'Campbell County',    
+# 'Charles Mix County',    'Clark County',    'Clay County',    'Codington County',    'Corson County',    'Custer County',    'Davison County',
+# 'Day County',    'Deuel County',    'Dewey County',    'Douglas County',    'Edmunds County',    'Fall River County',    'Faulk County',    'Grant County',    'Gregory County',    'Haakon County',   'Hamlin County',
+# 'Hand County',    'Hanson County',    'Harding County',    'Hughes County',    'Hutchinson County',    'Hyde County',    'Jackson County',  
+# 'Jerauld County',    'Jones County',    'Kingsbury County',    'Lake County',    'Lawrence County',    'Lincoln County',    'Lyman County',    'Marshall County',    'McCook County',
+# 'McPherson County',    'Meade County',    'Mellette County',    'Miner County',    'Minnehaha County',    'Moody County',    'Oglala Lakota County',   
+# 'Pennington County',    'Perkins County',    'Potter County',  'Roberts County',    'Sanborn County',   'Spink County',    'Stanley County',    'Sully County',    'Todd County',    'Tripp County',    
+# 'Turner County',    'Union County',    'Walworth County',    'Yankton County',    'Ziebach County'
+data_snap %>% 
+  mutate(line = rownames(data_snap)) %>%
+  filter(state == "South Dakota", county == "Minnehaha County") %>%
+  select(line, name, cases, deaths)
+explore_data %>% 
+  filter(date == "2020-04-06", state == "South Dakota", county == "Minnehaha County") %>%
+  select(line, name, cases, deaths)
+
+## yarn start --location "Minnehaha County, SD, USA"
+tidy_data %>% 
+  filter(type == "cases",
+         date == "2020-04-05",
+         # state == "South Dakota", 
+         county == "Minnehaha County") %>%
+  select(name, type, value)
+
+names(tidy_data)
+head(tidy_data)
 # explore_complete_data %>%
 #   filter(state == "FL")
 ## some states have multiple reports differentiated by coordinates, no city or county.
@@ -68,18 +173,30 @@ explore_complete_data %>%
 
 ## snapshot cds ########
 data_snap <- read_csv("raw_data/data.csv", col_types = cols(
-  .default = col_character(),
-  cases = col_double(),
-  deaths = col_double(),
-  recovered = col_double(),
-  tested = col_double(),
-  active = col_double(),
-  population = col_double(),
-  lat = col_double(),
-  long = col_double(),
-  rating = col_double(),
-  featureId = col_character()
-))
+        name = col_character(),
+        cases = col_double(),
+        deaths = col_double(),
+        recovered = col_double(),
+        tested = col_double(),
+        active = col_double(),
+        population = col_double(),
+        populationDensity = col_double(),
+        lat = col_double(),
+        long = col_double(),
+        rating = col_double(),
+        hospitalized = col_double(),
+        publishedDate = col_date(format = "")
+      ))
+        
+## can tz have a format?
+# data_snap$tz[[58]] %>% col_time()
+#   parse_date(format = "%Z")
+#   locale(tz = "UTC")
+# col_time(format = "%Z")
+# 
+# us_central <- locale(tz = "US/Central")
+# parse_datetime("1979-10-14T1010", locale = us_central)
+
 
 ## how does the aggregate level work?
 data_snap %>%
@@ -104,12 +221,81 @@ timeseries_data %>% filter(country == "United States") %>% View()
 
 timeseries_data %>% arrange(desc(cases)) %>% select(-deaths, -url) %>% View()
 
+## check issue # 478 ########
 names(data_snap)
-data_snap %>% arrange(desc(cases)) %>% 
-  # select(-deaths, -url) %>% 
-  View()
+glimpse(data_snap)
+check_478 <- data_snap %>%
+  filter(population != "NA") %>%
+  arrange(abs(long))
+
+iso1 <- read_csv("/Users/adamhughes/Documents/country-levels/coor_check.csv")
+
+check_iso <- iso1$countrylevel_id
+
+data_snap %>% filter(countryId %in% as_vector(check_iso), level == "country") %>%
+  arrange(desc(population)) %>% 
+  select(name, countryId, lat, long) %>% View()
+
+data_snap %>%
+  mutate(line_number = rownames(data_snap)) %>%
+  select(line_number, name, cases, population, lat, long, url, aggregate, tz, deaths) %>%
+  filter(population != "NA") %>%
+  arrange(abs(long)) %>% View()
+
+  ## USA tz in africa/algers
+data_snap %>% 
+  mutate(UID = rownames(data_snap)) %>%
+  filter(country == "United States", aggregate == "state", population == 325145963) %>% View()
+
+## plot long, lat
+
+## Map People ##########
+# install.packages(c("leaflet", "sp"))
+library(sp)
+library(leaflet)
+dfc <- check_478 %>% head(20)
+names(dfc)
+names(dfc)[13] <- "latitude"
+names(dfc)[14] <- "longitude"
+coordinates(dfc) <- ~longitude+latitude
+
+leaflet(dfc) %>% 
+  addMarkers(popup = paste(dfc$name, "has", dfc$cases, "cases of COVID-19,", 
+                           dfc$deaths, "deaths,", dfc$tested, "tested")
+             # fillOpacity = df$deaths / 80, 
+             # radius = 5,
+             # weight = 1
+  ) %>%
+  # addCircleMarkers(map = dfa, 
+  #                  fillOpacity = dfa$deaths,
+  #                  popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
+  #                                "<p>Population: <B>", dfa$population, "</B></p>
+  #                               <p>Cases: <B>", dfa$cases, "</B></p>
+  #                               <p>Deaths: <B>", dfa$deaths, "</B></p>
+  #                               <p>DATA: <B>https://coronadatascraper.com</B></p></font>")
+  #                  ) %>%
+  # addCircleMarkers(radius = 10) %>%
+  # addRectangles(lat2 = my_people_out_usa$latitude[pep] + lat_buffer,
+  #               lat1 = my_people_out_usa$latitude[pep] - lat_buffer,
+  #               lng2 = my_people_out_usa$longitude[pep] + lon_buffer, 
+  #               lng1 = my_people_out_usa$longitude[pep] - lon_buffer, 
+  #               popup = paste("Estimate from county level data points --" , 
+  #                             "(2 degree Longitude, 2 degree Latitude square) In this", 
+  #                             my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
+  #                             my_people_out_usa$lat_miles[pep] * 2, 
+  #                             "mile tall area, there are an estimated <B>", 
+  #                             my_people_out_usa$cases[pep], 
+  #                             "</B> confirmed cases of COVID-19.", 
+  #                             "DATA:https://coronadatascraper.com")) %>%
+  addTiles()
 
 
+
+
+
+
+
+## Explore
 data_snap %>% arrange(desc(cases)) %>% 
   # select(-deaths, -url) %>% 
   filter(country == "ITA") %>% View()

@@ -1,3 +1,5 @@
+## Data obtained from Corona Data Scraper
+
 library(tidyverse)
 ## My People ########
 ## degree buffer search area long, lat.
@@ -5,8 +7,8 @@ lon_buffer <- 1
 lat_buffer <- 1
 
 my_people <- 
-  tibble(    c(1:34),
-  c("Crawfordville", "LittleRock", "NewOrleans", "London", "NewYorkCity", 
+  tibble(    c(1:35),
+  c("LasVegas", "Crawfordville", "LittleRock", "NewOrleans", "London", "NewYorkCity", 
     "Melissa", "WarnerRobins", 
     "Phoenix", "OverlandPark", "Denver", "Oakland", "Fayetteville", 
     "Leesburg", "Smackover", "RoundTop", 
@@ -14,20 +16,20 @@ my_people <-
     "Melbourne", "Victoria", "LosAngeles", "Poole", 
     "Pittsburgh", "PIT", "ATL", "Annapolis", "Nassau", "Windsor", "Montpelier", "Russelville", 
     "Pittsburg", "BatonRouge" ),
-  c("FL", "AR", "LA", "ENG", "NY", "TX", "GA", "AZ", "KS", "CO", 
+  c("NV", "FL", "AR", "LA", "ENG", "NY", "TX", "GA", "AZ", "KS", "CO", 
     "CA", "AR", "FL", "AR", "TX", "CA", "OH", "RI", "EGY", "CA", "AUS", "CAN", 
     "CA", "ENG", "PA", "PA", "GA", "MD", "BAH", "CT", "VT", "AR", "KS", "LA" ),
-  c("Jan", "Anne", "NewOrleans", "London", "NYC", "Wayne", "Garrett", "Jaber", "Daniel", 
+  c("Vegas", "Jan", "Anne", "NewOrleans", "London", "NYC", "Wayne", "Garrett", "Jaber", "Daniel", 
     "Chase", "Bliss", "Adam", "Grandma", "Mom",  "Dad",  "Chance", "Ohio", 
     "RI",  "Helwan", "Ahmed", "Ben", "Victoria", 
     "Ryan",    "Rob", "CMU", "PIT",    "ATL", "Annapolis", "Ozy", 
     "Justin", "Joshua", "Haley", "Don", "Benee"),
-  c(-84.39, -92.41, -90.10, -0.11, -73.99, -96.56, -83.60, -112.07, -94.68, 
+  c(-115.2, -84.39, -92.41, -90.10, -0.11, -73.99, -96.56, -83.60, -112.07, -94.68, 
     -104.94, -122.25, -94.16, -81.87,     -92.73, -96.80, 
     -117.12, -81.24,  -71.32, 31.33,  -116.39,  145.04, -123.37,    
     -118.44,  -2.00, -79.95,-80.25, -84.43,  -76.54,     
     -77.29, -72.64,   -72.57,   -93.13,        -94.70, -91.20),
-  c(30.19, 34.74, 29.95, 51.52, 40.74, 33.27, 32.61, 33.49, 
+  c(36.2, 30.19, 34.74, 29.95, 51.52, 40.74, 33.27, 32.61, 33.49, 
     38.98, 39.60, 37.81, 36.07,  28.73,      33.36,  29.98,  
     32.80,   41.16,  41.74,  29.84,  33.73,   -36.83,  48.47,      
     34.07,    50.71, 40.44, 40.50,  33.64,   38.79,       
@@ -43,24 +45,29 @@ num <- dim(my_people)[1]
 # # time_snap <- data_time %>%
 # data_time <-data_time %>% select(-growthFactor)
 
-# data <- read_csv("/Users/adamhughes/Documents/coronadatascraper/dist/data.csv",
-#                  col_types = cols(
-#                    .default = col_double(),
-#                    city = col_character(),
-#                    county = col_character(),
-#                    state = col_character(),
-#                    country = col_character(),
-#                    url = col_character(),
-#                    maintainers = col_character(),
-#                    aggregate = col_character(),
-#                    tz = col_character(),
-#                    sources = col_character(),
-#                    curators = col_character()
-#                  ))
+data <- read_csv("/Users/adamhughes/Documents/coronadatascraper/dist/data.csv", col_names = TRUE,
+        cols(
+          name = col_character(),
+          cases = col_double(),
+          deaths = col_double(),
+          recovered = col_double(),
+          tested = col_double(),
+          active = col_double(),
+          population = col_double(),
+          populationDensity = col_double(),
+          lat = col_double(),
+          long = col_double(),
+          rating = col_double(),
+          hospitalized = col_double(),
+          publishedDate = col_character()
+        ))
+
+
+data_snap <- data
 
 
 ## load data ######
-data_snap <- read_csv("raw_data/data.csv", 
+data_snap <- read_csv("raw_data/data.csv",
                         col_types = cols(.default = col_character(),
                                         city = col_character(),
                                         cases = col_double(),
@@ -79,7 +86,9 @@ data_snap <- read_csv("raw_data/data.csv",
 names(data_snap)
 glimpse(data_snap)
 
-
+## use explore data from myPeople load
+# data_snap <- explore_data %>%
+#   filter(date == "2020-04-07")
 
 ## For Mypeople bubble count, I must remove the sum duplicates
 # data_snap %>% filter(aggregate == "county")
@@ -190,7 +199,7 @@ my_people_out %>%
 
 my_people_out %>% 
   mutate(case_per_capita = cases / population, death_per_capita = deaths / population) %>% 
-  arrange(desc(population))
+  arrange(desc(case_per_capita))
 
 write_csv(my_people_out, 
           paste0("data/", format(Sys.time(), "%Y%m%d%H%M"), "_my_people_cds_snapshot.csv"))
@@ -208,15 +217,31 @@ coordinates(df) <- ~longitude+latitude
 pep <- 3
 df$name
 
+## Normalize
+normalized <- (df$cases - min(df$cases)) / (max(df$cases) - min(df$cases)) * 10
+median(normalized)
+
 leaflet(df) %>% 
-  addMarkers(popup = paste(df$name, "has", df$cases, "cases of COVID-19,", 
-                            df$deaths, "deaths,", df$tested, "tested",
-                           " approximatly ", df$lon_miles, 
-                           "miles radius around them. DATA:coronadatascraper.com"),
-             # fillOpacity = df$deaths / 80, 
-             # radius = 5,
-             # weight = 1
-             ) %>%
+  # addMarkers(popup = paste(df$name, "has", df$cases, "cases of COVID-19,", 
+  #                           df$deaths, "deaths,", df$tested, "tested",
+  #                          " approximatly ", df$lon_miles, 
+  #                          "miles radius around them. DATA:coronadatascraper.com"),
+   addCircleMarkers(
+                   radius = 6,
+                   opacity = 1,
+                   weight = 1,
+                   fill = TRUE,
+                   fillOpacity = normalized,
+                   dashArray = NULL,
+                   popupOptions = NULL, label = NULL, labelOptions = NULL,
+                   options = pathOptions(), clusterOptions = NULL, clusterId = NULL,
+                   # data = getMapData(map),
+                   popup = paste(df$name, "has", df$cases, "cases of COVID-19,", 
+                                          df$deaths, "deaths,", df$tested, "tested",
+                                          " approximatly ", df$lon_miles, 
+                                          "miles radius around them. Data",
+                                          "obtained from Corona Data Scraper")
+                   ) %>%
   # addCircleMarkers(map = dfa, 
   #                  fillOpacity = dfa$deaths,
   #                  popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
@@ -226,18 +251,18 @@ leaflet(df) %>%
   #                               <p>DATA: <B>https://coronadatascraper.com</B></p></font>")
   #                  ) %>%
   # addCircleMarkers(radius = 10) %>%
-  addRectangles(lat2 = my_people_out_usa$latitude[pep] + lat_buffer,
-                lat1 = my_people_out_usa$latitude[pep] - lat_buffer,
-                lng2 = my_people_out_usa$longitude[pep] + lon_buffer, 
-                lng1 = my_people_out_usa$longitude[pep] - lon_buffer, 
-                popup = paste("Estimate from county level data points --" , 
-                              "(2 degree Longitude, 2 degree Latitude square) In this", 
-                              my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
-                              my_people_out_usa$lat_miles[pep] * 2, 
-                              "mile tall area, there are an estimated <B>", 
-                              my_people_out_usa$cases[pep], 
-                              "</B> confirmed cases of COVID-19.", 
-                              "DATA:https://coronadatascraper.com")) %>%
+  # addRectangles(lat2 = my_people_out_usa$latitude[pep] + lat_buffer,
+  #               lat1 = my_people_out_usa$latitude[pep] - lat_buffer,
+  #               lng2 = my_people_out_usa$longitude[pep] + lon_buffer, 
+  #               lng1 = my_people_out_usa$longitude[pep] - lon_buffer, 
+  #               popup = paste("Estimate from county level data points --" , 
+  #                             "(2 degree Longitude, 2 degree Latitude square) In this", 
+  #                             my_people_out_usa$lon_miles[pep] * 2, "mile wide and ", 
+  #                             my_people_out_usa$lat_miles[pep] * 2, 
+  #                             "mile tall area, there are an estimated <B>", 
+  #                             my_people_out_usa$cases[pep], 
+  #                             "</B> confirmed cases of COVID-19.", 
+  #                             "Data obtained from Corona Data Scraper")) %>%
   # addCircles(radius = df$cases * df$deaths / 10) %>%
   # labelOptions() %>%
   addTiles()
@@ -248,16 +273,23 @@ leaflet(df) %>%
 ## recreate plot from JHU with square and all county counts
 dfa <- data_all %>% 
   filter(country == "United States", 
-         state %in% c("Arkansas", "Louisiana", "Missouri", 
-                      # "California", 
-                      "Mississippi", "Oklahoma", "Texas"),
+         state %in% c(
+           "Arkansas", "Louisiana", "Missouri",
+           # "California",
+           "Mississippi", "Oklahoma", "Texas"),
+                      # # # Aidan group
+                      # "Rhode Island", "Connecticut", "Massachusetts",
+                      # "New York", "New Hampshire", "Vermont", "Maine",
+                      # "New Jersey", "Pennsylvania"),
          # !is.na(Admin2),
          lat != 0)
 names(dfa)
 my_people_out_usa$name
+## Aidan 27
+## Baton Rouge 6
 pep <- 6
-names(dfa)[13] <- "latitude"
-names(dfa)[14] <- "longitude"
+names(dfa)[14] <- "latitude"
+names(dfa)[15] <- "longitude"
 
 coordinates(dfa) <- ~longitude+latitude
 
@@ -278,15 +310,19 @@ leaflet(dfa) %>%
                               <p>Active: <B>", my_people_out_usa$active[pep], "</B></p>
                               <p>Recovered: <B>", my_people_out_usa$recovered[pep], "</B></p>
                               <p>Deaths: <B>", my_people_out_usa$deaths[pep], "</B></p>
-                              DATA: <B>https://coronadatascraper.com</B></font>")) %>%
+                              <B>Data obtained from Corona Data Scraper</B></font>")) %>%
   addCircleMarkers(fillOpacity = dfa$deaths, 
                    radius = 4, 
                    weight = 1,
                    popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
                                 "<p>Population: <B>", dfa$population, "</B></p>
+                                <p>Test: <B>", dfa$tested, "</B></p>
                                 <p>Cases: <B>", dfa$cases, "</B></p>
+                                <p>Active: <B>", dfa$active, "</B></p>
+                                <p>Recovered: <B>", dfa$recovered, "</B></p>
                                 <p>Deaths: <B>", dfa$deaths, "</B></p>
-                                <p>DATA: <B>https://coronadatascraper.com</B></p></font>"))
+                                <p><B>Data obtained from Corona Data Scraper</B></p></font>"))
+
 
 
 
@@ -298,19 +334,19 @@ leaflet(dfa) %>%
 #       my_people_out_usa$lon_miles[pep] * 2, "mile wide and ",
 #       my_people_out_usa$lat_miles[pep] * 2, "mile tall area, there are an estimated <B>",
 #       my_people_out_usa$cases[pep], 
-#       "</B> confirmed cases of COVID-19. DATA: https://coronadatascraper.com")
+#       "</B> confirmed cases of COVID-19. Data obtained from Corona Data Scraper")
 # 
 # paste("Estimate from county level data points. In this square there are an estimated, ",
 #       my_people_out_usa$population[pep], " people. There are<B>",
 #       my_people_out_usa$cases[pep], 
 #       "</B> cases of COVID-19, and<B>", my_people_out_usa$deaths[pep],
-#       "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")) %>%
+#       "</B>deaths. <B>Data obtained from Corona Data Scraper</B>")) %>%
 #   addCircleMarkers(fillOpacity = dfa$cases,
 #                    radius = 5, popup = paste("ESTIMATE: ",
 #                             dfa$county, " , ", dfa$state, "has<B>",
 #                             dfa$cases, "</B>cases of COVID-19, and<B>", 
 #                             my_people_out_usa$deaths[pep],
-#                             "</B>deaths. DATA: <B>https://coronadatascraper.com</B>")
+#                             "</B>deaths. Data obtained from Corona Data Scraper</B>")
 # 
 #    addCircleMarkers(radius = normalized * 15,
 #                     popup = paste("Estimate: ",
@@ -320,12 +356,15 @@ leaflet(dfa) %>%
                    
 ## PUBLISH TEXT
 # Experimental
-# Click Square -- COVID-19 Map -- DATA: https://coronadatascraper.com
+# Click Square -- COVID-19 Map -- Data obtained from Corona Data Scraper
 # Check state and territorial health departments.
 # Estimate COVID-19 cases from county level data points.
 # DATA: https://coronadatascraper.com
 # covid_baton_rouge
 
+
+# Experiment! do not trust!
+# Aidan_RI
 
 
 
@@ -398,3 +437,4 @@ paste0("Estimate COVID-19 around ", my_people$city[pep], ", ",
        " (", my_people$longitude[pep], ", ", my_people$latitude[pep], 
        ")")
 
+format(Sys.time(), "%Y%m%d%H%M")
