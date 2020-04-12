@@ -113,7 +113,7 @@ data_all %>%
   summarise(total = sum(cases))
 
 my_people$name
-pep <- 35
+pep <- 24
 ## this out is wrong, but I need it to create the out variable
 out <- data_all %>%
   filter(  lat <= my_people$latitude[pep] + lat_buffer
@@ -216,11 +216,11 @@ write_csv(my_people_out,
 
 # ## Map People ##########
 # # install.packages(c("leaflet", "sp"))
-# library(sp)
-# library(leaflet)
-# my_people_out_usa <- my_people_out %>% filter(longitude < -20)
-# df <- my_people_out_usa
-# my_people_out_usa$name
+library(sp)
+library(leaflet)
+my_people_out_usa <- my_people_out %>% filter(longitude < -20)
+df <- my_people_out_usa
+my_people_out_usa$name
 # coordinates(df) <- ~longitude+latitude
 # pep <- 3
 # df$name
@@ -284,6 +284,7 @@ my_people_out_usa$name
 ## Aidan 27
 ## Baton Rouge 6
 ## Bliss 7
+## Ryan 28
 pep <- 7
 
 dfa <- data_all %>% 
@@ -291,7 +292,7 @@ dfa <- data_all %>%
          state %in% c(
            # "Arkansas", "Louisiana", "Missouri",
            # "Mississippi", "Oklahoma", "Texas"),
-                      # # # # Aidan group
+                      # # # Aidan group
                       # "Rhode Island", "Connecticut", "Massachusetts",
                       # "New York", "New Hampshire", "Vermont", "Maine",
                       # "New Jersey", "Pennsylvania"),
@@ -325,7 +326,7 @@ leaflet(dfa) %>%
                               <B>Data obtained from Corona Data Scraper</B></font>")) %>%
   addCircleMarkers(fillOpacity = dfa$deaths, 
                    radius = 4, 
-                   weight = 1,
+                   weight = 1, 
                    popup = paste("<font size=3> ", dfa$county, " , ", dfa$state,
                                 "<p>Population: <B>", dfa$population, "</B></p>
                                 <p>Test: <B>", dfa$tested, "</B></p>
@@ -344,14 +345,14 @@ leaflet(dfa) %>%
 # Data obtained from Corona Data Scraper
 # covid_baton_rouge
 
-# Do Not Trust Square -- COVID-19 Map -- Data obtained from Corona Data Scraper
+# Estimation Square -- COVID-19 Map -- Data obtained from Corona Data Scraper
 # Check state and territorial health departments.
 # Estimate COVID-19 cases from county level data points.
 # Data obtained from Corona Data Scraper
 # Aidan_RI
 
 
-# Do Not Trust Square -- COVID-19 Map -- Data obtained from Corona Data Scraper
+# Estimation Square -- COVID-19 Map -- Data obtained from Corona Data Scraper
 # Check state and territorial health departments.
 # Estimate COVID-19 cases from county level data points.
 # Data obtained from Corona Data Scraper
@@ -410,7 +411,7 @@ outi <- data_all %>%
   mutate(radius = my_radius[1])
 
 my_people$name
-pep <- 34
+pep <- 24
 
 for(x in c(1:num_r)) {
   outi[x, ] <- data_all %>%

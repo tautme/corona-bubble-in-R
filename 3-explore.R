@@ -72,16 +72,77 @@ max(explore_data$date)
 ## Kansas #698
 ## https://github.com/covidatlas/coronadatascraper/issues/698
 
+explore_data_tidy <- explore_data %>%
+  group_by(state, date)
+
+## is there a kansas state total?
 explore_data %>%
+  filter(level == "county") %>%
+  filter(state == c("Kansas")) %>% 
+  select(date, name, level, cases, deaths, url) %>%
+  view()
+## YES! and it is added to my plot below!
+
+## county rollup
+explore_data %>%
+  filter(level == "county", date > "2020-03-11") %>%
   group_by(state, date) %>%
+  filter(state == c("Kansas")) %>%
   summarise(tested = sum(tested, na.rm = FALSE),
             cases = sum(cases, na.rm = FALSE)) %>%
-  filter(state == c("Kansas")) %>%
   ggplot(aes(x = date, y = cases, color = state)) +
     geom_point() +
+    # geom_point(aes(y = tested)) +
     scale_x_date(date_minor_breaks = "1 day")
-    scale_x_date(date_breaks = seq("2020-03-23", "2020-04-07"))
+    # scale_x_date(date_breaks = seq("2020-03-23", "2020-04-09"))
+    
+## straight state
+explore_data %>%
+  filter(level == "state", state == "Kansas", date > "2020-03-11") %>%
+    ggplot(aes(x = date, y = cases, color = state)) +
+      geom_point() +
+      # geom_point(aes(y = tested)) +
+      scale_x_date(date_minor_breaks = "1 day")
+## do not match | kansas mar. 19 - 22 and apr. 1
+## match but anomolius mar. 27 & 31
 
+## data.csv today match these?
+data_snap %>%
+  filter(level == "state", state == "Kansas") %>%
+  select(cases)
+
+data_snap %>%-
+  filter(level == "county", state == "Kansas") %>%
+  # group_by(county) %>%
+  summarize(total = sum(cases))
+
+data_snap %>%
+  filter(level == "country") %>%
+  arrange(desc(cases))
+
+
+## use tidy to map each type
+names(tidy_data)
+
+tidy_data %>% 
+  filter(level == "state", state == "Kansas", date > "2020-03-11", 
+         # type != "growthFactor",
+         type == "cases") %>%
+    ggplot(aes(x = date, y = value, color = type)) +
+      geom_point() +
+      scale_x_date(date_minor_breaks = "1 day")
+
+tidy_data %>% 
+  filter(level == "county", state == "Kansas", date > "2020-03-11") %>%
+  spread(type, value) %>%
+  group_by(date, state) %>%
+  summarise(cases = sum(cases)) %>%
+    ggplot(aes(x = date, y = cases)) +
+      geom_point() +
+      scale_x_date(date_minor_breaks = "1 day")
+
+
+    
 explore_state <- explore_data %>%
   filter(state == "Kansas")
 
@@ -185,9 +246,20 @@ data_snap <- read_csv("raw_data/data.csv", col_types = cols(
         long = col_double(),
         rating = col_double(),
         hospitalized = col_double(),
-        publishedDate = col_date(format = "")
+        publishedDate = col_character()
       ))
         
+## where is Brazil?
+data_snap %>%
+  filter(country == "Brazil")
+
+## hash Kansas
+hash_kansas <- read_csv("/Users/adamhughes/Documents/coronadatascraper/coronadatascraper-cache/2020-4-9/9cd650122f1e65a5a95a77187448db0c.csv")
+names(hash_kansas)
+glimpse(hash_kansas)
+
+sum(hash_kansas$Cases)
+
 ## can tz have a format?
 # data_snap$tz[[58]] %>% col_time()
 #   parse_date(format = "%Z")
@@ -222,6 +294,7 @@ timeseries_data %>% filter(country == "United States") %>% View()
 timeseries_data %>% arrange(desc(cases)) %>% select(-deaths, -url) %>% View()
 
 ## check issue # 478 ########
+## COOR AROUND 0 & 180 LONGITUDE 
 names(data_snap)
 glimpse(data_snap)
 check_478 <- data_snap %>%
@@ -255,8 +328,8 @@ library(sp)
 library(leaflet)
 dfc <- check_478 %>% head(20)
 names(dfc)
-names(dfc)[13] <- "latitude"
-names(dfc)[14] <- "longitude"
+names(dfc)[14] <- "latitude"
+names(dfc)[15] <- "longitude"
 coordinates(dfc) <- ~longitude+latitude
 
 leaflet(dfc) %>% 
