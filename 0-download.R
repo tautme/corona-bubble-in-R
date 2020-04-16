@@ -10,3 +10,4 @@ download.file("https://coronadatascraper.com/timeseries-tidy.csv", "raw_data/tim
 
 download.file("https://coronadatascraper.com/data.csv", "raw_data/data.csv", mode = "wb")
 
+download.file("https://coronadatascraper.com/timeseries-jhu.csv", "raw_data/timeseries-jhu.csv", mode = "wb")

@@ -1,7 +1,9 @@
 ## EDA
 library(tidyverse)
-## timeseries_spread ########
-explore_data <- read_csv("raw_data/timeseries.csv", 
+
+## load data ########
+## timeseries_spread
+time_data <- read_csv("raw_data/timeseries.csv", 
                          col_types = cols(
                            city = col_character(),
                            county = col_character(),
@@ -18,7 +20,9 @@ explore_data <- read_csv("raw_data/timeseries.csv",
                            recovered = col_double(),
                            active = col_double(),
                            tested = col_double(),
-                           date = col_date(format = "")
+                           date = col_date(format = ""),
+                           hospitalized = col_double(),
+                           discharged = col_character()
                          ))
 
 ## timeseries tidy
@@ -41,42 +45,77 @@ tidy_data <- read_csv("raw_data/timeseries-tidy.csv",
                           value = col_double()
                         ))
 
+## timeseries jhu style
+time_jhu <- read_csv("raw_data/timeseries-jhu.csv",
+                     col_types = cols(
+                       .default = col_double(),
+                       name = col_character(),
+                       level = col_character(),
+                       city = col_character(),
+                       county = col_character(),
+                       state = col_character(),
+                       country = col_character(),
+                       url = col_character(),
+                       aggregate = col_character(),
+                       tz = col_character()
+                     ))
+
+## snapshot cds 
+data_snap <- read_csv("raw_data/data.csv", 
+                      col_types = cols(
+                        name = col_character(),
+                        city = col_character(),
+                        cases = col_double(),
+                        deaths = col_double(),
+                        recovered = col_double(),
+                        tested = col_double(),
+                        active = col_double(),
+                        population = col_double(),
+                        populationDensity = col_double(),
+                        lat = col_double(),
+                        long = col_double(),
+                        rating = col_double(),
+                        hospitalized = col_double(),
+                        publishedDate = col_character()
+                      ))
+
 
 ## are there negative counts?
-explore_data %>% names()
-explore_data$level %>% as.factor() %>% levels()
-dim(explore_data)
+time_data %>% names()
+time_data$level %>% as.factor() %>% levels()
+dim(time_data)
 
-explore_data$state %>% is.na() %>% sum()
-explore_data %>%
+time_data$state %>% is.na() %>% sum()
+time_data %>%
   group_by(country)
 
 ## does the timeseries csv data also have the problem of double list growthFactor
 ## no, they are all from the spread
-explore_complete_data <- explore_data %>%
+explore_complete_data <- time_data %>%
   select(-recovered, -active)
 
 explore_complete_data %>%
+  filter(level == "county") %>%
   group_by(state, date) %>%
   summarise(tested = sum(tested, na.rm = TRUE), 
             cases = sum(cases, na.rm = TRUE)) %>%
   filter(state == c("Arkansas")) %>%
-  ggplot(aes(x = date, y = tested, color = state)) +
-    geom_line(aes(x = date, y = cases))
+    ggplot(aes(x = date, y = tested, color = state)) +
+      geom_point(aes(x = date, y = cases))
 
 ## check issue #673 ##########
 ## https://github.com/covidatlas/coronadatascraper/issues/673
 ## https://covid-atlas.slack.com/archives/C0101BDEEDV/p1586281979468800
-max(explore_data$date)
+max(time_data$date)
 
 ## Kansas #698
 ## https://github.com/covidatlas/coronadatascraper/issues/698
 
-explore_data_tidy <- explore_data %>%
+time_data_tidy <- time_data %>%
   group_by(state, date)
 
 ## is there a kansas state total?
-explore_data %>%
+time_data %>%
   filter(level == "county") %>%
   filter(state == c("Kansas")) %>% 
   select(date, name, level, cases, deaths, url) %>%
@@ -84,7 +123,7 @@ explore_data %>%
 ## YES! and it is added to my plot below!
 
 ## county rollup
-explore_data %>%
+time_data %>%
   filter(level == "county", date > "2020-03-11") %>%
   group_by(state, date) %>%
   filter(state == c("Kansas")) %>%
@@ -97,7 +136,7 @@ explore_data %>%
     # scale_x_date(date_breaks = seq("2020-03-23", "2020-04-09"))
     
 ## straight state
-explore_data %>%
+time_data %>%
   filter(level == "state", state == "Kansas", date > "2020-03-11") %>%
     ggplot(aes(x = date, y = cases, color = state)) +
       geom_point() +
@@ -107,11 +146,14 @@ explore_data %>%
 ## match but anomolius mar. 27 & 31
 
 ## data.csv today match these?
+names(data_snap)
+unique(data_snap$level)
+
 data_snap %>%
   filter(level == "state", state == "Kansas") %>%
   select(cases)
 
-data_snap %>%-
+data_snap %>%
   filter(level == "county", state == "Kansas") %>%
   # group_by(county) %>%
   summarize(total = sum(cases))
@@ -125,7 +167,7 @@ data_snap %>%
 names(tidy_data)
 
 tidy_data %>% 
-  filter(level == "state", state == "Kansas", date > "2020-03-11", 
+  filter(level == "state", state == "Kansas", date > "2020-03-14", 
          # type != "growthFactor",
          type == "cases") %>%
     ggplot(aes(x = date, y = value, color = type)) +
@@ -133,7 +175,7 @@ tidy_data %>%
       scale_x_date(date_minor_breaks = "1 day")
 
 tidy_data %>% 
-  filter(level == "county", state == "Kansas", date > "2020-03-11") %>%
+  filter(level == "county", state == "Kansas", date > "2020-03-14") %>%
   spread(type, value) %>%
   group_by(date, state) %>%
   summarise(cases = sum(cases)) %>%
@@ -143,7 +185,7 @@ tidy_data %>%
 
 
     
-explore_state <- explore_data %>%
+explore_state <- time_data %>%
   filter(state == "Kansas")
 
 explore_state %>%
@@ -152,7 +194,7 @@ explore_state %>%
   summarise(tested = sum(tested, na.rm = FALSE),
             cases = sum(cases, na.rm = FALSE))
 
-explore_data %>%
+time_data %>%
   group_by(state, date) %>%
   summarise(tested = sum(tested, na.rm = FALSE),
             cases = sum(cases, na.rm = FALSE)) %>%
@@ -161,9 +203,97 @@ explore_data %>%
     geom_line() +
     facet_grid(state ~ ., scales = "free")
 
+## Check a State ##########
+## do timeseries and tidy match?
+# test <- "New Jersey"
+# test <- "South Dakota"
+# test <- "Alaska"
+# test <- "Kansas"
+# test <- "California"
+test <- "New York"
+
+data_snap %>%
+  filter(level == "county", state == test) %>%
+  summarise(total = sum(cases))
+
+## county 
+
+tidy_data %>% 
+  filter(level == "county", state == test, date > "2020-03-11") %>% 
+  spread(type, value) %>% 
+  group_by(date, state) %>%
+  summarise(cases = sum(cases)) %>% 
+    ggplot(aes(x = date, y = cases)) +
+      geom_point() +
+      scale_x_date(date_minor_breaks = "1 day")
+
+time_data %>% 
+  filter(level == "county", state == test, date > "2020-03-11") %>% 
+  group_by(date, state) %>%
+  summarise(cases = sum(cases, na.rm = TRUE)) %>% 
+    ggplot(aes(x = date, y = cases)) +
+      geom_point() +
+      scale_x_date(date_minor_breaks = "1 day")
+
+time_jhu %>%
+  gather("2020-01-22":"2020-04-11", key = date, value = cases) %>%
+  mutate(date = as.Date(date, "%Y-%m-%d")) %>%
+  filter(level == "county", date > "2020-03-11", state == test) %>%
+  group_by(state, date) %>%
+  summarise(cases = sum(cases, na.rm = TRUE)) %>%
+    ggplot(aes(x = date, y = cases)) +
+      geom_point() +
+      scale_x_date(date_minor_breaks = "1 day")
+
+## state
+
+data_snap %>%
+  filter(level == "state", state == test) %>%
+  select(name, cases, deaths)
+
+max(tidy_data$date)
+
+tidy_data %>% 
+  filter(level == "state", state == test, type == "cases") %>% 
+  select(value) %>% max()
+
+tidy_data %>% 
+  filter(level == "state", state == test, date > "2020-03-11", 
+         type == "cases") %>%
+    ggplot(aes(x = date, y = value, color = type)) +
+      geom_point() +
+      scale_x_date(date_minor_breaks = "1 day")
+
+max(time_data$date)
+
+time_data %>%
+  filter(level == "state", date > "2020-03-11", state == test) %>%
+    ggplot(aes(x = date, y = cases, color = state)) +
+      geom_point() +
+      scale_x_date(date_minor_breaks = "1 day")
+
+time_jhu %>%
+  gather("2020-01-22":"2020-04-11", key = date, value = cases) %>%
+  mutate(date = as.Date(date, "%Y-%m-%d")) %>%
+  filter(level == "state", date > "2020-03-11", state == test) %>%
+    ggplot(aes(x = date, y = cases)) +
+      geom_point() +
+      scale_x_date(date_minor_breaks = "1 day")
+
+## see last date
+time_jhu %>%
+  gather("2020-01-22":"2020-04-12", key = date, value = cases) %>%
+  mutate(date = as.Date(date, "%Y-%m-%d")) %>%
+  filter(level == "state", date > "2020-03-11", state == test) %>%
+  arrange(desc(date)) %>%
+  select(name, date, cases)
+  
+
+
+
 ## South Dakota
 ## the decrease could be accociated with counting active cases?
-explore_data %>%
+time_data %>%
   filter(state == "South Dakota", date > "2020-04-01") %>% 
   group_by(county, date) %>%
   summarise(tested = sum(tested, na.rm = FALSE),
@@ -196,7 +326,7 @@ data_snap %>%
   mutate(line = rownames(data_snap)) %>%
   filter(state == "South Dakota", county == "Minnehaha County") %>%
   select(line, name, cases, deaths)
-explore_data %>% 
+time_data %>% 
   filter(date == "2020-04-06", state == "South Dakota", county == "Minnehaha County") %>%
   select(line, name, cases, deaths)
 
@@ -232,22 +362,7 @@ head(tidy_data)
 ## 574430->              99447 -> 
 
 
-## snapshot cds ########
-data_snap <- read_csv("raw_data/data.csv", col_types = cols(
-        name = col_character(),
-        cases = col_double(),
-        deaths = col_double(),
-        recovered = col_double(),
-        tested = col_double(),
-        active = col_double(),
-        population = col_double(),
-        populationDensity = col_double(),
-        lat = col_double(),
-        long = col_double(),
-        rating = col_double(),
-        hospitalized = col_double(),
-        publishedDate = col_character()
-      ))
+
         
 ## where is Brazil?
 data_snap %>%
@@ -410,7 +525,7 @@ names(df)[13] <- "latitude"
 names(df)[14] <- "longitude"
 
 ## what about fast rate change
-# df <- explore_data %>% filter(date == "2020-03-29", !is.na(lat), cases > 100)
+# df <- time_data %>% filter(date == "2020-03-29", !is.na(lat), cases > 100)
 # names(df)
 # names(df)[6] <- "latitude"
 # names(df)[7] <- "longitude"
@@ -444,10 +559,10 @@ state.name
 area <- tibble(state.name, state.area)
 
 ## time
-names(explore_data)
-time_us <- explore_data %>%
+names(time_data)
+time_us <- time_data %>%
   filter(country == "United States") %>%
-  filter(date == max(explore_data$date)) %>%
+  filter(date == max(time_data$date)) %>%
   filter(level == "state")
 
 names(time_us)
