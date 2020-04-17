@@ -291,12 +291,13 @@ leaflet(df) %>%
 ## recreate plot from JHU with square and all county counts
 
 my_people_out_usa$name
-## Aidan 27
-## Baton Rouge 6
-## Bliss 7
-## Ryan 28
-## new york 23
-pep <- 7
+## crap, these numbers change because the sort is set above.
+## Aidan 4
+## Baton Rouge 5
+## Bliss 22
+## Ryan 13
+## new york 1
+pep <- 22
 
 dfa <- data_all %>% 
   filter(country == "United States", 
@@ -361,7 +362,6 @@ leaflet(dfa) %>%
 # Estimate COVID-19 cases from county level data points.
 # Data obtained from Corona Data Scraper
 # Aidan_RI
-
 
 # Estimation Square -- COVID-19 Map -- Data obtained from Corona Data Scraper
 # Check state and territorial health departments.

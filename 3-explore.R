@@ -25,25 +25,6 @@ time_data <- read_csv("raw_data/timeseries.csv",
                            discharged = col_character()
                          ))
 
-## timeseries tidy
-tidy_data <- read_csv("raw_data/timeseries-tidy.csv", 
-                      col_types = 
-                        cols(
-                          name = col_character(),
-                          level = col_character(),
-                          city = col_character(),
-                          county = col_character(),
-                          state = col_character(),
-                          country = col_character(),
-                          population = col_double(),
-                          lat = col_double(),
-                          long = col_double(),
-                          aggregate = col_character(),
-                          tz = col_character(),
-                          date = col_date(format = ""),
-                          type = col_character(),
-                          value = col_double()
-                        ))
 
 ## timeseries jhu style
 time_jhu <- read_csv("raw_data/timeseries-jhu.csv",
@@ -164,24 +145,24 @@ data_snap %>%
 
 
 ## use tidy to map each type
-names(tidy_data)
+# names(tidy_data)
 
-tidy_data %>% 
-  filter(level == "state", state == "Kansas", date > "2020-03-14", 
-         # type != "growthFactor",
-         type == "cases") %>%
-    ggplot(aes(x = date, y = value, color = type)) +
-      geom_point() +
-      scale_x_date(date_minor_breaks = "1 day")
+# tidy_data %>% 
+#   filter(level == "state", state == "Kansas", date > "2020-03-14", 
+#          # type != "growthFactor",
+#          type == "cases") %>%
+#     ggplot(aes(x = date, y = value, color = type)) +
+#       geom_point() +
+#       scale_x_date(date_minor_breaks = "1 day")
 
-tidy_data %>% 
-  filter(level == "county", state == "Kansas", date > "2020-03-14") %>%
-  spread(type, value) %>%
-  group_by(date, state) %>%
-  summarise(cases = sum(cases)) %>%
-    ggplot(aes(x = date, y = cases)) +
-      geom_point() +
-      scale_x_date(date_minor_breaks = "1 day")
+# tidy_data %>% 
+#   filter(level == "county", state == "Kansas", date > "2020-03-14") %>%
+#   spread(type, value) %>%
+#   group_by(date, state) %>%
+#   summarise(cases = sum(cases)) %>%
+#     ggplot(aes(x = date, y = cases)) +
+#       geom_point() +
+#       scale_x_date(date_minor_breaks = "1 day")
 
 
     
@@ -206,29 +187,33 @@ time_data %>%
 ## Check a State ##########
 ## do timeseries and tidy match?
 # test <- "New Jersey"
-# test <- "South Dakota"
+test <- "South Dakota"
 # test <- "Alaska"
 # test <- "Kansas"
 # test <- "California"
-test <- "New York"
+# test <- "New York"
 
 data_snap %>%
   filter(level == "county", state == test) %>%
   summarise(total = sum(cases))
 
+data_snap %>%
+  filter(level == "state", state == test) %>%
+  summarise(total = sum(cases))
+
 ## county 
 
-tidy_data %>% 
-  filter(level == "county", state == test, date > "2020-03-11") %>% 
-  spread(type, value) %>% 
-  group_by(date, state) %>%
-  summarise(cases = sum(cases)) %>% 
-    ggplot(aes(x = date, y = cases)) +
-      geom_point() +
-      scale_x_date(date_minor_breaks = "1 day")
+# tidy_data %>% 
+#   filter(level == "county", state == test, date > "2020-03-15") %>% 
+#   spread(type, value) %>% 
+#   group_by(date, state) %>%
+#   summarise(cases = sum(cases)) %>% 
+#     ggplot(aes(x = date, y = cases)) +
+#       geom_point() +
+#       scale_x_date(date_minor_breaks = "1 day")
 
 time_data %>% 
-  filter(level == "county", state == test, date > "2020-03-11") %>% 
+  filter(level == "county", state == test, date > "2020-03-15") %>% 
   group_by(date, state) %>%
   summarise(cases = sum(cases, na.rm = TRUE)) %>% 
     ggplot(aes(x = date, y = cases)) +
@@ -236,9 +221,9 @@ time_data %>%
       scale_x_date(date_minor_breaks = "1 day")
 
 time_jhu %>%
-  gather("2020-01-22":"2020-04-11", key = date, value = cases) %>%
+  gather("2020-01-22":"2020-04-15", key = date, value = cases) %>%
   mutate(date = as.Date(date, "%Y-%m-%d")) %>%
-  filter(level == "county", date > "2020-03-11", state == test) %>%
+  filter(level == "county", date > "2020-03-15", state == test) %>%
   group_by(state, date) %>%
   summarise(cases = sum(cases, na.rm = TRUE)) %>%
     ggplot(aes(x = date, y = cases)) +
@@ -251,29 +236,29 @@ data_snap %>%
   filter(level == "state", state == test) %>%
   select(name, cases, deaths)
 
-max(tidy_data$date)
+# max(tidy_data$date)
 
-tidy_data %>% 
-  filter(level == "state", state == test, type == "cases") %>% 
-  select(value) %>% max()
+# tidy_data %>% 
+#   filter(level == "state", state == test, type == "cases") %>% 
+#   select(value) %>% max()
 
-tidy_data %>% 
-  filter(level == "state", state == test, date > "2020-03-11", 
-         type == "cases") %>%
-    ggplot(aes(x = date, y = value, color = type)) +
-      geom_point() +
-      scale_x_date(date_minor_breaks = "1 day")
+# tidy_data %>% 
+#   filter(level == "state", state == test, date > "2020-03-15", 
+#          type == "cases") %>%
+#     ggplot(aes(x = date, y = value, color = type)) +
+#       geom_point() +
+#       scale_x_date(date_minor_breaks = "1 day")
 
 max(time_data$date)
 
 time_data %>%
-  filter(level == "state", date > "2020-03-11", state == test) %>%
+  filter(level == "state", date > "2020-03-15", state == test) %>%
     ggplot(aes(x = date, y = cases, color = state)) +
       geom_point() +
       scale_x_date(date_minor_breaks = "1 day")
 
 time_jhu %>%
-  gather("2020-01-22":"2020-04-11", key = date, value = cases) %>%
+  gather("2020-01-22":"2020-04-15", key = date, value = cases) %>%
   mutate(date = as.Date(date, "%Y-%m-%d")) %>%
   filter(level == "state", date > "2020-03-11", state == test) %>%
     ggplot(aes(x = date, y = cases)) +
