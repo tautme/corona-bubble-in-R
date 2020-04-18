@@ -95,13 +95,13 @@ max(time_data$date)
 time_data_tidy <- time_data %>%
   group_by(state, date)
 
-## is there a kansas state total?
-time_data %>%
-  filter(level == "county") %>%
-  filter(state == c("Kansas")) %>% 
-  select(date, name, level, cases, deaths, url) %>%
-  view()
-## YES! and it is added to my plot below!
+# ## is there a kansas state total?
+# time_data %>%
+#   filter(level == "county") %>%
+#   filter(state == c("Kansas")) %>% 
+#   select(date, name, level, cases, deaths, url) %>%
+#   view()
+# ## YES! and it is added to my plot below!
 
 ## county rollup
 time_data %>%
@@ -164,8 +164,6 @@ data_snap %>%
 #       geom_point() +
 #       scale_x_date(date_minor_breaks = "1 day")
 
-
-    
 explore_state <- time_data %>%
   filter(state == "Kansas")
 
@@ -181,15 +179,24 @@ time_data %>%
             cases = sum(cases, na.rm = FALSE)) %>%
   filter(state %in% c("Kansas", "Alaska", "New Jersey", "South Dakota")) %>%
   ggplot(aes(x = date, y = cases, color = state)) +
-    geom_line() +
+    geom_point() +
     facet_grid(state ~ ., scales = "free")
+
+time_data %>%
+  group_by(state, date) %>%
+  summarise(tested = sum(tested, na.rm = FALSE),
+            cases = sum(cases, na.rm = FALSE)) %>%
+  filter(state %in% c("Kansas", "Alaska", "New Jersey", "South Dakota")) %>%
+  ggplot(aes(x = date, y = cases, color = state)) +
+  geom_point() +
+  facet_grid(state ~ ., scales = "free")
 
 ## Check a State ##########
 ## do timeseries and tidy match?
 # test <- "New Jersey"
-test <- "South Dakota"
+# test <- "South Dakota"
 # test <- "Alaska"
-# test <- "Kansas"
+test <- "Kansas"
 # test <- "California"
 # test <- "New York"
 
@@ -213,7 +220,7 @@ data_snap %>%
 #       scale_x_date(date_minor_breaks = "1 day")
 
 time_data %>% 
-  filter(level == "county", state == test, date > "2020-03-15") %>% 
+  filter(level == "county", state == test, date > "2020-03-16") %>% 
   group_by(date, state) %>%
   summarise(cases = sum(cases, na.rm = TRUE)) %>% 
     ggplot(aes(x = date, y = cases)) +
@@ -221,9 +228,9 @@ time_data %>%
       scale_x_date(date_minor_breaks = "1 day")
 
 time_jhu %>%
-  gather("2020-01-22":"2020-04-15", key = date, value = cases) %>%
+  gather("2020-01-22":"2020-04-16", key = date, value = cases) %>%
   mutate(date = as.Date(date, "%Y-%m-%d")) %>%
-  filter(level == "county", date > "2020-03-15", state == test) %>%
+  filter(level == "county", date > "2020-03-16", state == test) %>%
   group_by(state, date) %>%
   summarise(cases = sum(cases, na.rm = TRUE)) %>%
     ggplot(aes(x = date, y = cases)) +
@@ -421,6 +428,26 @@ data_snap %>%
   filter(country == "United States", aggregate == "state", population == 325145963) %>% View()
 
 ## plot long, lat
+
+## less than 5 ###############
+## sudoku
+time_data %>%
+  filter(level == "county", state == "Arkansas", date == "2020-03-25") %>%
+  view()
+## Arknasas started giving <5 number on April 14th
+time_data %>%
+  filter(level == "county", state == "Rhode Island", date == "2020-03-21") %>%
+  view()
+
+## check random 2 3
+test <- seq(5, 100, by = 1)
+test <- (sample.int(101,size=100,replace=TRUE)-1)
+a <- sum(test)
+
+sample(c(1:4), size = 4, replace = F)[1]
+
+
+
 
 ## Map People ##########
 # install.packages(c("leaflet", "sp"))
