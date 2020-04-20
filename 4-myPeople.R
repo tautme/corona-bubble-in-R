@@ -205,19 +205,22 @@ my_people_out %>%
          cases, deaths, recovered, active) %>%
   arrange(desc(cases), desc(deaths))
 
+format(Sys.time(), "%Y-%m-%d")
+
 my_people_out <- my_people_out %>% 
-  mutate(area_sqmi = lon_miles * lat_miles,
+  mutate(date = format(Sys.time(), "%Y-%m-%d"), area_sqmi = lon_miles * lat_miles,
          cases_per_area = cases / area_sqmi,
          deaths_per_area = deaths / area_sqmi,
          case_per_capita = cases / population, 
          death_per_capita = deaths / population,
-         pop_den = population / area_sqmi) %>% 
-  arrange(desc(case_per_capita))
+         death_per_case = deaths / cases,
+         pop_den = population / area_sqmi)
+
 
 write_csv(my_people_out, 
           paste0("data/", format(Sys.time(), "%Y%m%d%H%M"), "_my_people_cds_snapshot.csv"))
 
-
+format(Sys.time(), "%Y-%m-%d")
 
 # ## Map People ##########
 # # install.packages(c("leaflet", "sp"))
@@ -292,12 +295,12 @@ leaflet(df) %>%
 
 my_people_out_usa$name
 ## crap, these numbers change because the sort is set above.
-## Aidan 4
-## Baton Rouge 5
-## Bliss 22
-## Ryan 13
-## new york 1
-pep <- 4
+## Aidan 27
+## Baton Rouge 6
+## Bliss 7
+## Ryan 28
+## new york 23
+pep <- 7
 
 dfa <- data_all %>% 
   filter(country == "United States", 
@@ -305,10 +308,10 @@ dfa <- data_all %>%
            # "Arkansas", "Louisiana", "Missouri",
            # "Mississippi", "Oklahoma", "Texas"),
                       # # # Aidan group
-                      "Rhode Island", "Connecticut", "Massachusetts",
-                      "New York", "New Hampshire", "Vermont", "Maine",
-                      "New Jersey", "Pennsylvania"),
-                                  # "California", "Nevada", "Arizona", "Oregon"),
+                      # "Rhode Island", "Connecticut", "Massachusetts",
+                      # "New York", "New Hampshire", "Vermont", "Maine",
+                      # "New Jersey", "Pennsylvania"),
+                                  "California", "Nevada", "Arizona", "Oregon"),
          # !is.na(Admin2),
          lat != 0)
 names(dfa)
@@ -363,11 +366,11 @@ leaflet(dfa) %>%
 # Data obtained from Corona Data Scraper
 # Aidan_RI
 
-# Estimation Square -- COVID-19 Map -- Data obtained from Corona Data Scraper
-# Check state and territorial health departments.
-# Estimate COVID-19 cases from county level data points.
-# Data obtained from Corona Data Scraper
-# bliss_oakland
+Estimation Square -- COVID-19 Map -- Data obtained from Corona Data Scraper
+Check state and territorial health departments.
+Estimate COVID-19 cases from county level data points.
+Data obtained from Corona Data Scraper
+bliss_oakland
 
 
 
