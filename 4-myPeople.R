@@ -366,11 +366,11 @@ leaflet(dfa) %>%
 # Data obtained from Corona Data Scraper
 # Aidan_RI
 
-Estimation Square -- COVID-19 Map -- Data obtained from Corona Data Scraper
-Check state and territorial health departments.
-Estimate COVID-19 cases from county level data points.
-Data obtained from Corona Data Scraper
-bliss_oakland
+# Estimation Square -- COVID-19 Map -- Data obtained from Corona Data Scraper
+# Check state and territorial health departments.
+# Estimate COVID-19 cases from county level data points.
+# Data obtained from Corona Data Scraper
+# bliss_oakland
 
 
 
