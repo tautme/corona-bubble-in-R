@@ -192,6 +192,12 @@ time_data %>%
   facet_grid(state ~ ., scales = "free")
 
 ## Check a State ##########
+format(Sys.time(), "%Y-%m-%d")
+stime <- as.Date(Sys.time())
+yesterday <- stime - 1
+yesterday <- as.character(today)
+last_month <- stime - 31
+last_month <- as.character(last_month)
 ## do timeseries and tidy match?
 # test <- "New Jersey"
 # test <- "South Dakota"
@@ -219,18 +225,24 @@ data_snap %>%
 #       geom_point() +
 #       scale_x_date(date_minor_breaks = "1 day")
 
-time_data %>% 
-  filter(level == "county", state == test, date > "2020-03-19") %>% 
+time_data %>%
+  filter(level == "county", state == test, date > last_month) %>%
   group_by(date, state) %>%
-  summarise(cases = sum(cases, na.rm = TRUE)) %>% 
+  summarise(cases = sum(cases, na.rm = TRUE)) %>%
     ggplot(aes(x = date, y = cases)) +
       geom_point() +
       scale_x_date(date_minor_breaks = "1 day")
 
+## try and automate date change each day
+# gather_range <- paste0('2020-01-22":"', today)
+# gather_range <- paste0('2020-01-22":"', as.character(today))
+# replace(gather_range, c(":"), "")
+# gsub("\\", "", gather_range)
+
 time_jhu %>%
-  gather("2020-01-22":"2020-04-19", key = date, value = cases) %>%
+  gather("2020-01-22":"2020-04-21", key = date, value = cases) %>%
   mutate(date = as.Date(date, "%Y-%m-%d")) %>%
-  filter(level == "county", date > "2020-03-19", state == test) %>%
+  filter(level == "county", date > last_month, state == test) %>%
   group_by(state, date) %>%
   summarise(cases = sum(cases, na.rm = TRUE)) %>%
     ggplot(aes(x = date, y = cases)) +
@@ -265,7 +277,7 @@ time_data %>%
       scale_x_date(date_minor_breaks = "1 day")
 
 time_jhu %>%
-  gather("2020-01-22":"2020-04-19", key = date, value = cases) %>%
+  gather("2020-01-22":"2020-04-21", key = date, value = cases) %>%
   mutate(date = as.Date(date, "%Y-%m-%d")) %>%
   filter(level == "state", date > "2020-03-19", state == test) %>%
     ggplot(aes(x = date, y = cases)) +
@@ -305,15 +317,6 @@ data_snap %>%
   filter(level == "county") %>%
   select(name, cases, deaths)
  
-## individual county
-# 'Aurora County',    'Beadle County',    'Bennett County',    'Bon Homme County',    'Brookings County',    'Brown County',    'Brule County',    'Buffalo County',    'Butte County',    'Campbell County',    
-# 'Charles Mix County',    'Clark County',    'Clay County',    'Codington County',    'Corson County',    'Custer County',    'Davison County',
-# 'Day County',    'Deuel County',    'Dewey County',    'Douglas County',    'Edmunds County',    'Fall River County',    'Faulk County',    'Grant County',    'Gregory County',    'Haakon County',   'Hamlin County',
-# 'Hand County',    'Hanson County',    'Harding County',    'Hughes County',    'Hutchinson County',    'Hyde County',    'Jackson County',  
-# 'Jerauld County',    'Jones County',    'Kingsbury County',    'Lake County',    'Lawrence County',    'Lincoln County',    'Lyman County',    'Marshall County',    'McCook County',
-# 'McPherson County',    'Meade County',    'Mellette County',    'Miner County',    'Minnehaha County',    'Moody County',    'Oglala Lakota County',   
-# 'Pennington County',    'Perkins County',    'Potter County',  'Roberts County',    'Sanborn County',   'Spink County',    'Stanley County',    'Sully County',    'Todd County',    'Tripp County',    
-# 'Turner County',    'Union County',    'Walworth County',    'Yankton County',    'Ziebach County'
 data_snap %>% 
   mutate(line = rownames(data_snap)) %>%
   filter(state == "South Dakota", county == "Minnehaha County") %>%
