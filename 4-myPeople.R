@@ -300,7 +300,7 @@ my_people_out_usa$name
 ## Bliss 7
 ## Ryan 28
 ## new york 23
-pep <- 27
+pep <- 7
 
 dfa <- data_all %>% 
   filter(country == "United States", 
@@ -308,10 +308,10 @@ dfa <- data_all %>%
            # "Arkansas", "Louisiana", "Missouri",
            # "Mississippi", "Oklahoma", "Texas"),
                       # # # Aidan group
-                      "Rhode Island", "Connecticut", "Massachusetts",
-                      "New York", "New Hampshire", "Vermont", "Maine",
-                      "New Jersey", "Pennsylvania"),
-                                  # "California", "Nevada", "Arizona", "Oregon"),
+                      # "Rhode Island", "Connecticut", "Massachusetts",
+                      # "New York", "New Hampshire", "Vermont", "Maine",
+                      # "New Jersey", "Pennsylvania"),
+                                  "California", "Nevada", "Arizona", "Oregon"),
          # !is.na(Admin2),
          lat != 0)
 names(dfa)
