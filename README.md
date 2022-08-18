@@ -5,7 +5,7 @@ Easy to find number in your State or County.
 
 How about the number of cases in your area, between county level and state level?
 
-[Interactive dashboard at rpubs.com/rdam](rpubs.com/rdam/covid_baton_rouge)
+[Interactive dashboard at rpubs.com/rdam](https://rpubs.com/Rdam/covid_baton_rouge)
 
 <img width="709" alt="Screen Shot 2022-08-03 at 6 54 28 PM" src="https://user-images.githubusercontent.com/15580867/182733180-be675818-d749-452a-a7df-e1044f3736f5.png">
 
